@@ -5,6 +5,12 @@
 /.pnp
 .pnp.js
 
+# optional npm cache directory
+/.npm
+
+# output of 'npm pack'
+.tgz
+
 # testing
 /coverage
 
@@ -18,6 +24,19 @@
 .env.test.local
 .env.production.local
 
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# dotenv 
+.env
+.eng.test
+
+# VS Code
+/.vscode
+.code-workspace
+.vscode-test
+
+# lock files for libreOffice
+.~lock.*
