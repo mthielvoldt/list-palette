@@ -1,68 +1,23 @@
+# list-palette
+## A cheklist app for the enthusiastic optimizer 
+
+How many times have you written a grocery list, or made a packing list for a trip?  We end up writing the same things down over and over, and each time we have to really focus to make sure we don't forget something.  
+
+But what if our lists were efficient to re-use?  
+
+List-palette delivers on this idea by letting you save your lists for later and mix component lists together to make new lists when the time comes to shop, pack, or plan your day.  
+
+A quick example:  
+You're planning to buy groceries and you intend to make tacos tonight.  You've made tacos before, so you already have that list of ingredients saved.  But you also need your staples, the items you always check on before you shop: butter, milk, beverage, breakfast items.  And then there's that bulk item that you realized you are almost out of.  Salt! 
+
+With ListPalette, you put today's shopping list together by: 
+1. Creating a new list
+2. Adding your tacos recipe
+3. Adding your staples 
+4. Adding salt
+
+When you're done shopping, you delete this list: it was for one-time use.  But you still have your tacos and staples lists on-hand for next time. 
+
+Of course, I couldn't stop there because we all know that grocery stores have sections.  To fit with reality, your lists can have sub-lists so when you're in the produce section, you see the produce you need, and not the flour. 
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
