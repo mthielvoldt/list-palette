@@ -12,16 +12,21 @@ console.log("intitalState:", initialState);
 function App() {
   const [items, setItems] = useState(initialState);
 
-  function addItem(newText) {
+  // Adds an item at the beginning of the root list
+  function addItem(text, parent) {
+    console.log("Add item - parent: %s  text: %s", parent, text);
     setItems(prevItems => {
-      let newItem = { id: prevItems.length, text: newText, children: [] };
+      let newItem = { id: prevItems.length, next: prevItems[parent].child, child: null, text: text };
+      prevItems[parent].child = prevItems.length;
       return prevItems.concat(newItem);
     });
+    
+    // DB: Create new row for new Item. 
+    // DB: update parent's child link 
   }
 
   function deleteItem(id, parent, previous) {
-
-    console.log("Delete item - id:", id, "parent:", parent, "previous:", previous    );
+    console.log("Delete item - id: %d  parent: %d  previous: %d", id, parent, previous );
     setItems(prevItems => {
       
       // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
