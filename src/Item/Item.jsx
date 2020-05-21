@@ -80,7 +80,15 @@ function Item({ item, items, index, parent, prev, deleteCB, moveCB }) {
     >
       {item.text}
       <button onClick={e => deleteMe(e)}>Delete</button>
-      {(item.child) && <List items={items} index={item.child} deleteCB={deleteCB} moveCB={moveCB} />}
+      {(item.child) && 
+        <List 
+          items={items} 
+          index={item.child} 
+          parent={item.id} 
+          deleteCB={deleteCB} 
+          moveCB={moveCB} 
+        />
+      }
     </li>
   );
 }
