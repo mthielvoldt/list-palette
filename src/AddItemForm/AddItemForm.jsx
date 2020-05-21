@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import './AddItemForm.css';
 
 function AddItemForm({ callback }) {
   const [inputText, setInputText] = useState("");

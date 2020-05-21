@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import List from "../List/List";
+import './Item.css';
 
 function Item({ text, index, id, deleteCB, moveCB, children }) {
   const [struck, setStruck] = useState(false);

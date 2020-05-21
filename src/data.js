@@ -4,7 +4,7 @@ const startingState = [
   { id: 6, text: "Commit changes", children: [] },
   {
     id: 2,
-    text: "Try to take over the world",
+    text: "Take over the world",
     children: [
       { id: 12, text: "Persuade Brain", children: [] },
       { id: 7, text: "Buy drill", children: [] },

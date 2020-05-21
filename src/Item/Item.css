@@ -1,0 +1,21 @@
+.item {
+    /* background: #f1f5f8; */
+    cursor: default;
+  }
+  
+  .item.over {
+    border-top: 2px solid blue;
+  }
+  .item.under {
+    border-bottom: 2px solid blue;
+  }
+  
+  .item button {
+    float: right;
+  }
+  
+  li {
+    text-align: left;
+    position: relative;
+    padding: 0.5rem;
+  }
