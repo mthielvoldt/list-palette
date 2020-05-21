@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import AddItemForm from "../AddItemForm/AddItemForm";
 import List from "../List/List";
-import startingState from '../data.js'
+import mockQuery from '../data.js'
 import './App.css';
 
-let nextId = startingState.reduce( (accum, current) => 
+let nextId = mockQuery.reduce( (accum, current) => 
   ((current.id > accum) ? current.id : accum), 0);
 console.log("nextID:", nextId);
 
+let initialState = [];
+mockQuery.forEach((elem, index) => {initialState[elem.id] = elem});
+console.log(initialState);
+
 function App() {
-  const [items, setItems] = useState(startingState);
+  const [items, setItems] = useState(initialState);
 
   function addItem(newText) {
     let newItem = { id: ++nextId, text: newText, children: [] };
@@ -36,7 +40,7 @@ function App() {
         <h1>To-Do List</h1>
       </div>
       <AddItemForm callback={addItem} />
-      <List items={items} deleteCB={deleteItem} moveCB={moveItem} />
+      <List items={items} index={items[0].child} deleteCB={deleteItem} moveCB={moveItem} />
     </div>
   );
 }

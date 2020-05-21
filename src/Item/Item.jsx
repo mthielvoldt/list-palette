@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import List from "../List/List";
 import './Item.css';
 
-function Item({ text, index, id, deleteCB, moveCB, children }) {
+function Item({ item, items, index, deleteCB, moveCB }) {
   const [struck, setStruck] = useState(false);
 
   function onItemClick(event) {
@@ -12,15 +12,15 @@ function Item({ text, index, id, deleteCB, moveCB, children }) {
   function deleteMe(e) {
     e.preventDefault();
     e.stopPropagation();
-    deleteCB(id);
+    deleteCB(item.id);
   }
 
   function handleDragStart(e) {
     e.stopPropagation();
     e.dataTransfer.setData("startIndex", index.toString());
-    e.dataTransfer.setData("startId", id);
+    e.dataTransfer.setData("startId", item.id);
     e.dataTransfer.dropEffect = "move"; // See the section on the DataTransfer object.
-    console.log("drag item: %d", id);
+    console.log("drag item: %d", item.id);
     //deleteCB(id);
   }
 
@@ -29,7 +29,7 @@ function Item({ text, index, id, deleteCB, moveCB, children }) {
 
     console.log(e.dataTransfer.dropEffect);
     removeOverUnder(e);
-    deleteCB(id);
+    deleteCB(item.id);
 
     //if (e.dataTransfer.dropEffect === move )
   }
@@ -78,9 +78,9 @@ function Item({ text, index, id, deleteCB, moveCB, children }) {
       onClick={onItemClick}
       style={struck ? { textDecoration: "line-through" } : null}
     >
-      {text}
+      {item.text}
       <button onClick={e => deleteMe(e)}>Delete</button>
-      <List items={children} deleteCB={deleteCB} moveCB={moveCB} />
+      {(item.child) && <List items={items} index={item.child} deleteCB={deleteCB} moveCB={moveCB} />}
     </li>
   );
 }
