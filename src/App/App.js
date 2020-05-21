@@ -4,24 +4,43 @@ import List from "../List/List";
 import mockQuery from '../data.js'
 import './App.css';
 
-let nextId = mockQuery.reduce( (accum, current) => 
-  ((current.id > accum) ? current.id : accum), 0);
-console.log("nextID:", nextId);
 
 let initialState = [];
 mockQuery.forEach((elem, index) => {initialState[elem.id] = elem});
-console.log(initialState);
+console.log("intitalState:", initialState);
 
 function App() {
   const [items, setItems] = useState(initialState);
 
   function addItem(newText) {
-    let newItem = { id: ++nextId, text: newText, children: [] };
-    setItems(prevItems => [...prevItems, newItem]);
+    setItems(prevItems => {
+      let newItem = { id: prevItems.length, text: newText, children: [] };
+      return prevItems.concat(newItem);
+    });
   }
 
-  function deleteItem(id) {
-    setItems(prevItems => prevItems.filter(item => item.id !== id));
+  function deleteItem(id, parent, previous) {
+
+    console.log("Delete item - id:", id, "parent:", parent, "previous:", previous    );
+    setItems(prevItems => {
+      
+      // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
+      // Note: we don't need to actually remove the item in the front-end, so we don't.
+      let newItems = prevItems.concat();
+
+      // first we manage the links. 
+      // is the item the first in its list? 
+      // then we have to make its parent point to it's next sibling
+      if (previous == null) {
+        newItems[parent].child = prevItems[id].next;
+      } else {
+        newItems[previous].next = prevItems[id].next;
+      }
+      return newItems;
+    });
+    // DB operations: 
+    // - edit either parent or previous sibling's link. 
+    // - remove the row for this item. 
   }
 
   function moveItem(source, dest) {
@@ -40,7 +59,7 @@ function App() {
         <h1>To-Do List</h1>
       </div>
       <AddItemForm callback={addItem} />
-      <List items={items} index={items[0].child} deleteCB={deleteItem} moveCB={moveItem} />
+      <List items={items} index={items[0].child} parent="0" deleteCB={deleteItem} moveCB={moveItem} />
     </div>
   );
 }

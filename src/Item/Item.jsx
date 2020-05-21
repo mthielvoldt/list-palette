@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import List from "../List/List";
 import './Item.css';
 
-function Item({ item, items, index, deleteCB, moveCB }) {
+function Item({ item, items, index, parent, prev, deleteCB, moveCB }) {
   const [struck, setStruck] = useState(false);
 
   function onItemClick(event) {
@@ -12,7 +12,7 @@ function Item({ item, items, index, deleteCB, moveCB }) {
   function deleteMe(e) {
     e.preventDefault();
     e.stopPropagation();
-    deleteCB(item.id);
+    deleteCB(item.id, parent, prev);
   }
 
   function handleDragStart(e) {
