@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import List from "../List/List";
 import './Item.css';
 
-function Item({ item, items, index, parent, prev, deleteCB, moveCB }) {
+function Item({ item, items, index, deleteCB, moveCB }) {
   const [struck, setStruck] = useState(false);
 
   function onItemClick(event) {
@@ -12,7 +12,7 @@ function Item({ item, items, index, parent, prev, deleteCB, moveCB }) {
   function deleteMe(e) {
     e.preventDefault();
     e.stopPropagation();
-    deleteCB(item.id, parent, prev);
+    deleteCB(item);
   }
 
   function handleDragStart(e) {
@@ -29,7 +29,7 @@ function Item({ item, items, index, parent, prev, deleteCB, moveCB }) {
 
     console.log(e.dataTransfer.dropEffect);
     removeOverUnder(e);
-    deleteCB(item.id);
+    deleteCB(item);
 
     //if (e.dataTransfer.dropEffect === move )
   }
@@ -84,7 +84,6 @@ function Item({ item, items, index, parent, prev, deleteCB, moveCB }) {
         <List 
           items={items} 
           index={item.child} 
-          parent={item.id} 
           deleteCB={deleteCB} 
           moveCB={moveCB} 
         />

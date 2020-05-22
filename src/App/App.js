@@ -13,17 +13,31 @@ function App() {
   function addItem(text, parent) {
     console.log("Add item - parent: %s  text: %s", parent, text);
     setItems(prevItems => {
-      let newItem = { id: prevItems.length, next: prevItems[parent].child, child: null, text: text };
-      prevItems[parent].child = prevItems.length;
+      let newItem = { 
+        id: prevItems.length, 
+        next: prevItems[parent].child, 
+        child: null, 
+        previous: null, 
+        parent: parent,
+        text: text 
+      };
+      
+      // make next sibling point to this as its previous. 
+      prevItems[prevItems[parent].child].previous = newItem.id;
+
+      // make parent point to this as its child. 
+      prevItems[parent].child = newItem.id; // DB
+
+
       return prevItems.concat(newItem);
     });
     
     // DB: Create new row for new Item. 
-    // DB: update parent's child link 
+    // DB: update parent's child link  (DB doesn't need reverse link updated)
   }
 
-  function deleteItem(id, parent, previous) {
-    console.log("Delete item - id: %d  parent: %d  previous: %d", id, parent, previous );
+  function deleteItem(item) {
+    console.log("Delete item:", item );
     setItems(prevItems => {
       
       // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
@@ -33,10 +47,10 @@ function App() {
       // first we manage the links. 
       // is the item the first in its list? 
       // then we have to make its parent point to it's next sibling
-      if (previous == null) {
-        newItems[parent].child = prevItems[id].next;
+      if (item.previous == null) {
+        newItems[item.parent].child = prevItems[item.id].next;
       } else {
-        newItems[previous].next = prevItems[id].next;
+        newItems[item.previous].next = prevItems[item.id].next;
       }
       return newItems;
     });
@@ -61,7 +75,7 @@ function App() {
         <h1>To-Do List</h1>
       </div>
       <AddItemForm callback={addItem} />
-      <List items={items} index={items[0].child} parent="0" deleteCB={deleteItem} moveCB={moveItem} />
+      <List items={items} index={items[0].child} deleteCB={deleteItem} moveCB={moveItem} />
     </div>
   );
 }
