@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import AddItemForm from "../AddItemForm/AddItemForm";
 import List from "../List/List";
-import mockQuery from '../data.js'
+import mockQuery, {toSparseDoubleLink} from '../data.js'
 import './App.css';
 
-
-let initialState = [];
-mockQuery.forEach((elem, index) => {initialState[elem.id] = elem});
-console.log("intitalState:", initialState);
+const initialState = toSparseDoubleLink(mockQuery);
 
 function App() {
   const [items, setItems] = useState(initialState);
