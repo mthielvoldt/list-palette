@@ -1,7 +1,7 @@
 import React from 'react';
 import Item from '../Item/Item';
 
-function List({ items, index, deleteCB, moveCB }) {
+function List({ items, index, position, deleteCB, moveCB }) {
 
   // build a return array
   let a = [];
@@ -9,15 +9,14 @@ function List({ items, index, deleteCB, moveCB }) {
 
   while (index != null) {
     let item = items[index];
-    a[j] = <Item
+    a[j++] = <Item
       key={index}
-      index={j}
+      position={position++}
       items={items}
       item={item}
       deleteCB={deleteCB}
       moveCB={moveCB}
     />;
-    j++;
     index = item.next;
   }
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import List from "../List/List";
 import './Item.css';
 
-function Item({ item, items, index, deleteCB, moveCB }) {
+function Item({ item, items, position, deleteCB, moveCB }) {
   const [struck, setStruck] = useState(false);
 
   function onItemClick(event) {
@@ -17,28 +17,25 @@ function Item({ item, items, index, deleteCB, moveCB }) {
 
   function handleDragStart(e) {
     e.stopPropagation();
-    e.dataTransfer.setData("startIndex", index.toString());
+    e.dataTransfer.setData("startPosition", position);
     e.dataTransfer.setData("startId", item.id);
     e.dataTransfer.dropEffect = "move"; // See the section on the DataTransfer object.
-    console.log("drag item: %d", item.id);
-    //deleteCB(id);
+    console.log("Drag Source id: %d  position: %d", item.id, position);
   }
 
   function handleDragEnd(e) {
     e.stopPropagation();
-
-    console.log(e.dataTransfer.dropEffect);
     removeOverUnder(e);
-    deleteCB(item);
-
-    //if (e.dataTransfer.dropEffect === move )
   }
 
   function handleDragOver(e) {
     // the item under the dragged item.
     if (e.preventDefault) e.preventDefault(); // Necessary. Allows us to drop.
+    if (e.stopPropagation) e.stopPropagation();
 
-    if (e.dataTransfer.getData("startIndex") < index) {
+    console.log("Start: ", e.dataTransfer.getData("startPosition"), "  Current: ", position);
+
+    if (e.dataTransfer.getData("startPosition") < position) {
       e.target.classList.add("under");
     } else {
       e.target.classList.add("over");
@@ -56,11 +53,14 @@ function Item({ item, items, index, deleteCB, moveCB }) {
     if (e.stopPropagation) {
       e.stopPropagation(); // Stops some browsers from redirecting.
     }
-    let fromIndex = Number(e.dataTransfer.getData("startIndex"));
+    let fromId = Number(e.dataTransfer.getData("startId"));
+    let startPosition = Number(e.dataTransfer.getData("startPosition"));
 
     // Don't do anything if dropping the same column we're dragging.
-    if (fromIndex !== index) {
-      moveCB(fromIndex, index);
+    if ( position > startPosition ) {
+      moveCB(fromId, item.id, "after" );
+    } else if ( position < startPosition ) {
+      moveCB(fromId, item.id, "before" );
     }
     removeOverUnder(e);
     return false;
@@ -78,12 +78,13 @@ function Item({ item, items, index, deleteCB, moveCB }) {
       onClick={onItemClick}
       style={struck ? { textDecoration: "line-through" } : null}
     >
-      {item.text}
+      {item.text}{position}
       <button onClick={e => deleteMe(e)}>Delete</button>
       {(item.child) && 
         <List 
           items={items} 
           index={item.child} 
+          position={position + 1}
           deleteCB={deleteCB} 
           moveCB={moveCB} 
         />
