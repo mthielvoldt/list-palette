@@ -15,6 +15,11 @@ function Item({ item, items, position, deleteCB, moveCB }) {
     deleteCB(item);
   }
 
+  function enterMe(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   function handleDragStart(e) {
     e.stopPropagation();
     e.dataTransfer.setData("startPosition", position);
@@ -80,6 +85,7 @@ function Item({ item, items, position, deleteCB, moveCB }) {
     >
       {item.text}
       <button onClick={e => deleteMe(e)}>Delete</button>
+      <button onClick={e => enterMe(e)}>Enter</button>
       {(item.child) && 
         <List 
           items={items} 
