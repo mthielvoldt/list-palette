@@ -4,15 +4,18 @@ import List from "../List/List";
 import mockQuery, { toSparseDoubleLink } from '../data.js'
 import './App.css';
 
-const initialState = toSparseDoubleLink(mockQuery);
+const initialState = {
+  items: toSparseDoubleLink(mockQuery), 
+  location: 0 };
 
 function App() {
-  const [items, setItems] = useState(initialState);
+  const [state, setState] = useState(initialState);
 
   // Adds an item at the beginning of the root list
   function addItem(text, parent) {
     console.log("Add item - parent: %s  text: %s", parent, text);
-    setItems(prevItems => {
+    setState(prevState => {
+      let prevItems = prevState.items;
       let newItem = {
         id: prevItems.length,
         next: prevItems[parent].child,
@@ -84,11 +87,11 @@ function App() {
 
   function deleteItem(item) {
     console.log("Delete item:", item);
-    setItems(items => {
+    setState( prevState => {
       // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
       // Note: we don't need to actually remove the item in the front-end, so we don't.
-      let newItems = items.concat();
-      return disconnectItem(item, newItems);
+      let newItems = prevState.items.concat();
+      return { items: disconnectItem(item, newItems), location: prevState.location};
     });
     // DB operations: 
     // - edit either parent or previous sibling's link. 
@@ -98,15 +101,15 @@ function App() {
   function moveItem(source, dest, relation) {
     console.log("reOrder: src: %d dest: %d", source, dest);
 
-    setItems(prevItems => {
-      let newItems = prevItems.concat();
+    setState(prevState => {
+      let newItems = prevState.items.concat();
 
       // cut the item out if it's old position.  
       // do this first because connectItem() clobbers source links. 
       disconnectItem(newItems[source], newItems);
       // re-link to place source item in new position. 
       connectItem(newItems[source], newItems[dest], newItems, relation);
-      return newItems;
+      return { items: newItems, location: prevState.location };
     });
 
   }
@@ -115,11 +118,12 @@ function App() {
     <div className="container">
       <div className="heading">
         <h1>To-Do List</h1>
+        {/* <Location location={location} /> */}
       </div>
       <AddItemForm callback={addItem} />
       <List
-        items={items}
-        index={items[0].child}
+        items={state.items}
+        index={state.items[state.location].child}
         position="0"
         deleteCB={deleteItem}
         moveCB={moveItem}
