@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './AddItemForm.css';
 
-function AddItemForm({ callback }) {
+function AddItemForm({ location, callback }) {
   const [inputText, setInputText] = useState("");
 
   function handleChange(event) {
@@ -18,7 +18,7 @@ function AddItemForm({ callback }) {
   // calls parent function that adds item to the list, passing the newly entered text.
   function addItem() {
     if (inputText === "") return;
-    callback(inputText, 0);
+    callback(inputText, location);
     setInputText("");
   }
 

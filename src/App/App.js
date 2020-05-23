@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Location from "../Location/Location"
 import AddItemForm from "../AddItemForm/AddItemForm";
 import List from "../List/List";
 import mockQuery, { toSparseDoubleLink } from '../data.js'
@@ -32,7 +33,7 @@ function App() {
       prevItems[parent].child = newItem.id; // DB
 
 
-      return prevItems.concat(newItem);
+      return {items: prevItems.concat(newItem), location: prevState.location};
     });
     // DB: Create new row for new Item. 
     // DB: update parent's child link  (DB doesn't need reverse link updated)
@@ -114,19 +115,28 @@ function App() {
 
   }
 
+  function setLocation(newLocation) {
+    console.log(newLocation);
+    setState( prevState => ({...prevState, location: newLocation}) );
+  }
+
   return (
     <div className="container">
       <div className="heading">
         <h1>To-Do List</h1>
-        {/* <Location location={location} /> */}
       </div>
-      <AddItemForm callback={addItem} />
+      <Location 
+        items={state.items} 
+        location={state.location} 
+        locateCB={setLocation}/>
+      <AddItemForm location={state.location} callback={addItem} />
       <List
         items={state.items}
         index={state.items[state.location].child}
         position="0"
         deleteCB={deleteItem}
         moveCB={moveItem}
+        locateCB={setLocation}
       />
     </div>
   );
