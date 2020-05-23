@@ -1,3 +1,8 @@
+
+.form {
+  padding-left: 0.7rem;
+}
+
 .form input {
     box-sizing: border-box;
     background-color: transparent;
@@ -9,11 +14,12 @@
     font-family: "Architects Daughter", cursive;
     font-size: 1rem;
     color: hsla(260, 2%, 25%, 0.7);
-    width: 70%;
+    width: auto;
     margin-bottom: 20px;
   }
   
   button {
+    position: relative;
     padding: 0;
     border: none;
     font-family: "Architects Daughter", cursive;

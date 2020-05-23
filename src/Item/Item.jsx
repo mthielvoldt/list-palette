@@ -67,7 +67,7 @@ function Item({ item, items, position, deleteCB, moveCB }) {
   }
 
   return (
-    <li
+    <div
       className="item"
       draggable="true"
       onDragOver={e => handleDragOver(e)}
@@ -78,7 +78,7 @@ function Item({ item, items, position, deleteCB, moveCB }) {
       onClick={onItemClick}
       style={struck ? { textDecoration: "line-through" } : null}
     >
-      {item.text}{position}
+      {item.text}
       <button onClick={e => deleteMe(e)}>Delete</button>
       {(item.child) && 
         <List 
@@ -89,7 +89,7 @@ function Item({ item, items, position, deleteCB, moveCB }) {
           moveCB={moveCB} 
         />
       }
-    </li>
+    </div>
   );
 }
 export default Item;

@@ -20,7 +20,7 @@ function List({ items, index, position, deleteCB, moveCB }) {
     index = item.next;
   }
 
-  return (<ul>{a}</ul>);
+  return (<div className="list">{a}</div>);
 }
 
 export default List;

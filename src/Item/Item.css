@@ -1,6 +1,10 @@
 .item {
     /* background: #f1f5f8; */
     cursor: default;
+    text-align: left;
+    position: relative;
+    padding-top: 0.5rem;
+    padding-left: 0.7rem;
   }
   
   .item.over {
@@ -12,10 +16,4 @@
   
   .item button {
     float: right;
-  }
-  
-  li {
-    text-align: left;
-    position: relative;
-    padding: 0.5rem;
   }
