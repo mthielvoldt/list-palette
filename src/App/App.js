@@ -49,12 +49,11 @@ function App() {
         items[dest.previous].next = item.id;
       }
       dest.previous = item.id;
-      dest.parent = null;
 
     } else {
       // assume we meant the item to come immediately after dest. 
       item.previous = dest.id;
-      item.parent = null;
+      item.parent = dest.parent;
       item.next = dest.next;
 
       if (dest.next != null ) {

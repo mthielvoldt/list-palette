@@ -17,7 +17,7 @@ function AddItemForm({ callback }) {
 
   // calls parent function that adds item to the list, passing the newly entered text.
   function addItem() {
-    if (inputText == "") return;
+    if (inputText === "") return;
     callback(inputText, 0);
     setInputText("");
   }

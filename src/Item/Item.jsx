@@ -16,8 +16,8 @@ function Item({ item, items, position, deleteCB, moveCB }) {
   }
 
   function enterMe(e) {
-    e.preventDefault();
     e.stopPropagation();
+    
   }
 
   function handleDragStart(e) {
