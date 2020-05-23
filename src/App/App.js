@@ -6,8 +6,9 @@ import mockQuery, { toSparseDoubleLink } from '../data.js'
 import './App.css';
 
 const initialState = {
-  items: toSparseDoubleLink(mockQuery), 
-  location: 0 };
+  items: toSparseDoubleLink(mockQuery),
+  location: 0
+};
 
 function App() {
   const [state, setState] = useState(initialState);
@@ -26,14 +27,17 @@ function App() {
         text: text
       };
 
+      let newItems = prevItems.concat(newItem);
+
       // make next sibling point to this as its previous. 
-      prevItems[prevItems[parent].child].previous = newItem.id;
+      if (newItems[parent].child != null) {
+        newItems[newItems[parent].child].previous = newItem.id;
+      }
 
       // make parent point to this as its child. 
-      prevItems[parent].child = newItem.id; // DB
+      newItems[parent].child = newItem.id; // DB
 
-
-      return {items: prevItems.concat(newItem), location: prevState.location};
+      return { items: newItems, location: prevState.location };
     });
     // DB: Create new row for new Item. 
     // DB: update parent's child link  (DB doesn't need reverse link updated)
@@ -60,7 +64,7 @@ function App() {
       item.parent = dest.parent;
       item.next = dest.next;
 
-      if (dest.next != null ) {
+      if (dest.next != null) {
         items[dest.next].previous = item.id;
       }
       dest.next = item.id;
@@ -88,11 +92,11 @@ function App() {
 
   function deleteItem(item) {
     console.log("Delete item:", item);
-    setState( prevState => {
+    setState(prevState => {
       // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
       // Note: we don't need to actually remove the item in the front-end, so we don't.
       let newItems = prevState.items.concat();
-      return { items: disconnectItem(item, newItems), location: prevState.location};
+      return { items: disconnectItem(item, newItems), location: prevState.location };
     });
     // DB operations: 
     // - edit either parent or previous sibling's link. 
@@ -117,7 +121,7 @@ function App() {
 
   function setLocation(newLocation) {
     console.log(newLocation);
-    setState( prevState => ({...prevState, location: newLocation}) );
+    setState(prevState => ({ ...prevState, location: newLocation }));
   }
 
   return (
@@ -125,10 +129,10 @@ function App() {
       <div className="heading">
         <h1>To-Do List</h1>
       </div>
-      <Location 
-        items={state.items} 
-        location={state.location} 
-        locateCB={setLocation}/>
+      <Location
+        items={state.items}
+        location={state.location}
+        locateCB={setLocation} />
       <AddItemForm location={state.location} callback={addItem} />
       <List
         items={state.items}
