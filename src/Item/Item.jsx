@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import List from "../List/List";
+import DropDownButton from "./DropDownButton"
 import './Item.css';
 
 function Item({ item, items, position, deleteCB, moveCB, locateCB }) {
-  const [struck, setStruck] = useState(false);
+  const [state, setState] = useState({ struck: false, drop: "collapsed" });
 
   function onItemClick(event) {
-    setStruck(!struck);
+    event.stopPropagation();
+    setState(prevState => ({ ...prevState, struck: !prevState.struck }));
   }
 
   function deleteMe(e) {
@@ -63,15 +65,20 @@ function Item({ item, items, position, deleteCB, moveCB, locateCB }) {
     let startPosition = Number(e.dataTransfer.getData("startPosition"));
 
     // Don't do anything if dropping the same column we're dragging.
-    if ( position > startPosition ) {
-      moveCB(fromId, item.id, "after" );
-    } else if ( position < startPosition ) {
-      moveCB(fromId, item.id, "before" );
+    if (position > startPosition) {
+      moveCB(fromId, item.id, "after");
+    } else if (position < startPosition) {
+      moveCB(fromId, item.id, "before");
     }
     removeOverUnder(e);
     return false;
   }
 
+  function toggleDropDown() {
+    console.log("toggleDrp");
+    setState( prevState => ({...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded"}));
+  }
+  
   return (
     <div
       className="item"
@@ -82,18 +89,22 @@ function Item({ item, items, position, deleteCB, moveCB, locateCB }) {
       onDragStart={e => handleDragStart(e)}
       onDrop={e => handleDrop(e)}
       onClick={onItemClick}
-      style={struck ? { textDecoration: "line-through" } : null}
+      style={state.struck ? { textDecoration: "line-through" } : null}
     >
+
+      <DropDownButton 
+        viewState={(item.child) ? state.drop : "empty" }
+        toggleCB={toggleDropDown} />
       {item.text}
       <button onClick={e => deleteMe(e)}>Delete</button>
       <button onClick={e => enterMe(e)}>Enter</button>
-      {(item.child) && 
-        <List 
-          items={items} 
-          index={item.child} 
+      {(item.child) && (state.drop === "expanded") &&
+        <List
+          items={items}
+          index={item.child}
           position={position + 1}
-          deleteCB={deleteCB} 
-          moveCB={moveCB} 
+          deleteCB={deleteCB}
+          moveCB={moveCB}
           locateCB={locateCB}
         />
       }
