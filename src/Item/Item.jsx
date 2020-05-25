@@ -3,7 +3,7 @@ import List from "../List/List";
 import DropDownButton from "./DropDownButton"
 import './Item.css';
 
-function Item({ item, items, position, deleteCB, moveCB, toggleCB, locateCB }) {
+function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locateCB }) {
   const [state, setState] = useState({ drop: "collapsed" });
 
   function onItemClick(event) {
@@ -22,7 +22,12 @@ function Item({ item, items, position, deleteCB, moveCB, toggleCB, locateCB }) {
   function enterMe(e) {
     e.stopPropagation();
     locateCB(item.id);
+  }
 
+  function duplicateMe(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dupCB(item.id);
   }
 
   function handleDragStart(e) {
@@ -59,7 +64,7 @@ function Item({ item, items, position, deleteCB, moveCB, toggleCB, locateCB }) {
   }
 
   // Fired on target li .
-  function handleDrop(e) {
+  function handleDropDownToggle(e) {
     if (e.stopPropagation) {
       e.stopPropagation(); // Stops some browsers from redirecting.
     }
@@ -89,7 +94,7 @@ function Item({ item, items, position, deleteCB, moveCB, toggleCB, locateCB }) {
       onDragLeave={e => removeOverUnder(e)}
       onDragEnd={e => handleDragEnd(e)}
       onDragStart={e => handleDragStart(e)}
-      onDrop={e => handleDrop(e)}
+      onDrop={e => handleDropDownToggle(e)}
       onClick={e => onItemClick(e)}
       style={item.checked ? { textDecoration: "line-through" } : null}
     >
@@ -100,6 +105,7 @@ function Item({ item, items, position, deleteCB, moveCB, toggleCB, locateCB }) {
       {item.text}
       <button onClick={e => deleteMe(e)}>Delete</button>
       <button onClick={e => enterMe(e)}>Enter</button>
+      <button onClick={e => duplicateMe(e)}>Dup</button>
       {(item.child) && (state.drop === "expanded") &&
         <List
           items={items}
@@ -107,6 +113,7 @@ function Item({ item, items, position, deleteCB, moveCB, toggleCB, locateCB }) {
           position={position + 1}
           deleteCB={deleteCB}
           moveCB={moveCB}
+          dupCB={dupCB}
           locateCB={locateCB}
           toggleCB={toggleCB}
         />

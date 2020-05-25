@@ -14,29 +14,19 @@ function App() {
   const [state, setState] = useState(initialState);
 
   // Adds an item at the beginning of the root list
-  function addItem(text, parent) {
-    console.log("Add item - parent: %s  text: %s", parent, text);
+  function addItem(text) {
+    console.log("Add item - parent: %s  text: %s", state.location, text);
     setState(prevState => {
       let prevItems = prevState.items;
       let newItem = {
         id: prevItems.length,
-        next: prevItems[parent].child,
-        child: null,
-        previous: null,
-        parent: parent,
         text: text, 
         checked: false,
       };
 
       let newItems = prevItems.concat(newItem);
 
-      // make next sibling point to this as its previous. 
-      if (newItems[parent].child != null) {
-        newItems[newItems[parent].child].previous = newItem.id;
-      }
-
-      // make parent point to this as its child. 
-      newItems[parent].child = newItem.id; // DB
+      connectItem(newItems[newItem.id], newItems[prevState.location], newItems, "child");
 
       return { items: newItems, location: prevState.location };
     });
@@ -44,9 +34,29 @@ function App() {
     // DB: update parent's child link  (DB doesn't need reverse link updated)
   }
 
+  function dupList(id) { 
+
+    
+    setState( prevState => {
+
+      // Start with copying the root item
+      let newItem  = {...prevState.items[id], id: prevState.items.length};
+      let newItems = prevState.items.concat(newItem);
+
+
+      connectItem(newItem, newItems[prevState.location] , newItems, "child");
+      console.log("duplicate Item:", newItems, prevState.items);
+      
+      return {items: newItems, location: prevState.location};
+    });
+    
+  }
+
   function connectItem(item, dest, items, relation) {
 
-    if (relation === "before") {
+    switch (relation) {
+
+    case "before":
       item.previous = dest.previous;
       item.parent = dest.parent;
       item.next = dest.id;
@@ -58,8 +68,9 @@ function App() {
         items[dest.previous].next = item.id;
       }
       dest.previous = item.id;
+      break;
 
-    } else {
+    case "after":
       // assume we meant the item to come immediately after dest. 
       item.previous = dest.id;
       item.parent = dest.parent;
@@ -69,6 +80,22 @@ function App() {
         items[dest.next].previous = item.id;
       }
       dest.next = item.id;
+      break;
+
+    case "child":
+      item.previous = null;
+      item.parent = dest.id;
+      item.next = dest.child;
+
+      if (dest.child != null) {
+        items[dest.child] = {...items[dest.child], previous: item.id};
+      }
+      items[dest.id] = {...dest, child: item.id};
+      break;
+
+    default:
+      console.error("unspefified relationship to destination");
+      return -1;
     }
     return items;
   }
@@ -151,6 +178,7 @@ function App() {
         position="0"
         deleteCB={deleteItem}
         moveCB={moveItem}
+        dupCB={dupList}
         locateCB={setLocation}
         toggleCB={toggleItemChecked}
       />
