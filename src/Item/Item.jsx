@@ -3,12 +3,14 @@ import List from "../List/List";
 import DropDownButton from "./DropDownButton"
 import './Item.css';
 
-function Item({ item, items, position, deleteCB, moveCB, locateCB }) {
-  const [state, setState] = useState({ struck: false, drop: "collapsed" });
+function Item({ item, items, position, deleteCB, moveCB, toggleCB, locateCB }) {
+  const [state, setState] = useState({ drop: "collapsed" });
 
   function onItemClick(event) {
     event.stopPropagation();
-    setState(prevState => ({ ...prevState, struck: !prevState.struck }));
+    event.preventDefault();
+    console.log("Toggle Item-checked. Id: ", item.id);
+    toggleCB(item.id);
   }
 
   function deleteMe(e) {
@@ -78,7 +80,7 @@ function Item({ item, items, position, deleteCB, moveCB, locateCB }) {
     console.log("toggleDrp");
     setState( prevState => ({...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded"}));
   }
-  
+
   return (
     <div
       className="item"
@@ -88,8 +90,8 @@ function Item({ item, items, position, deleteCB, moveCB, locateCB }) {
       onDragEnd={e => handleDragEnd(e)}
       onDragStart={e => handleDragStart(e)}
       onDrop={e => handleDrop(e)}
-      onClick={onItemClick}
-      style={state.struck ? { textDecoration: "line-through" } : null}
+      onClick={e => onItemClick(e)}
+      style={item.checked ? { textDecoration: "line-through" } : null}
     >
 
       <DropDownButton 
@@ -106,6 +108,7 @@ function Item({ item, items, position, deleteCB, moveCB, locateCB }) {
           deleteCB={deleteCB}
           moveCB={moveCB}
           locateCB={locateCB}
+          toggleCB={toggleCB}
         />
       }
     </div>

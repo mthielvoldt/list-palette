@@ -24,7 +24,8 @@ function App() {
         child: null,
         previous: null,
         parent: parent,
-        text: text
+        text: text, 
+        checked: false,
       };
 
       let newItems = prevItems.concat(newItem);
@@ -119,6 +120,16 @@ function App() {
 
   }
 
+  function toggleItemChecked(id) {
+    setState(prevState => {
+      let newItem = {...prevState.items[id], checked: !prevState.items[id].checked };
+      let newItems = prevState.items.concat();
+      newItems[id] = newItem; 
+
+      return { items: newItems, location: prevState.location };
+    });
+  }
+
   function setLocation(newLocation) {
     console.log(newLocation);
     setState(prevState => ({ ...prevState, location: newLocation }));
@@ -141,6 +152,7 @@ function App() {
         deleteCB={deleteItem}
         moveCB={moveItem}
         locateCB={setLocation}
+        toggleCB={toggleItemChecked}
       />
     </div>
   );
