@@ -26,7 +26,7 @@ function App() {
 
       let newItems = prevItems.concat(newItem);
 
-      connectItem(newItems[newItem.id], newItems[prevState.location], newItems, "child");
+      connectItem( newItem.id, prevState.location, newItems, "child");
 
       return { items: newItems, location: prevState.location };
     });
@@ -36,95 +36,113 @@ function App() {
 
   function dupList(id) { 
 
-    
-    setState( prevState => {
 
-      // Start with copying the root item
-      let newItem  = {...prevState.items[id], id: prevState.items.length};
-      let newItems = prevState.items.concat(newItem);
+    setState( ({items, location}) => {
 
+      // Start with copying the root item - 
+      // putting the copy at the end of the previous array
+      let newItem  = {...items[id], id: items.length};  
 
-      connectItem(newItem, newItems[prevState.location] , newItems, "child");
-      console.log("duplicate Item:", newItems, prevState.items);
+      // shallow-copy items array
+      let newItems = items.concat(newItem);
+
+      // connectItem expects to be able to mutate the array iteself
+      // but not the linked-to objects in the array.  It makes new copies of those if they will be changed. 
+      connectItem(newItem.id, location , newItems, "child");
+      console.log("duplicate Item:", newItems);
       
-      return {items: newItems, location: prevState.location};
+      return {items: newItems, location: location};
     });
     
   }
 
-  function connectItem(item, dest, items, relation) {
+  function connectItem(srcId, destId, items, relation) {
+    // This function replaces 3 elements of the 'items' array with new objects: 
+    // items[srcId], items[destId], and a third item that depends on the relation parameter. 
+    // The original objects referenced by the 'items' array are not mutated, but 
+    // the 'items' array itself (the object references) is mutated. 
+
+    // make copy of src and dest. 
+    let srcItem = {...items[srcId]};
+    let destItem = {...items[destId]};
 
     switch (relation) {
 
-    case "before":
-      item.previous = dest.previous;
-      item.parent = dest.parent;
-      item.next = dest.id;
+    case "before":  // plug in srcItem immediately before destItem
+      srcItem.previous = destItem.previous;
+      srcItem.parent = destItem.parent;
+      srcItem.next = destItem.id;
 
-      // handle connection above item
-      if (dest.previous === null) {
-        items[dest.parent].child = item.id;
+      // handle connection above source item
+      if (destItem.previous === null) {
+        items[destItem.parent] = {...items[destItem.parent], child: srcItem.id };
       } else {  // dest was not first item
-        items[dest.previous].next = item.id;
+        items[destItem.previous] = {...items[destItem.previous], next: srcItem.id };
       }
-      dest.previous = item.id;
+      destItem.previous = srcItem.id;
       break;
 
-    case "after":
-      // assume we meant the item to come immediately after dest. 
-      item.previous = dest.id;
-      item.parent = dest.parent;
-      item.next = dest.next;
+    case "after": // plug in srcItem immediately after destItem
+      srcItem.previous = destItem.id;
+      srcItem.parent = destItem.parent;
+      srcItem.next = destItem.next;
 
-      if (dest.next != null) {
-        items[dest.next].previous = item.id;
+      if (destItem.next != null) {
+        items[destItem.next] = {...items[destItem.next], previous: srcItem.id};
       }
-      dest.next = item.id;
+      destItem.next = srcItem.id;
       break;
 
-    case "child":
-      item.previous = null;
-      item.parent = dest.id;
-      item.next = dest.child;
+    case "child": // plug in srcItem as first child of destItem
+      srcItem.previous = null;
+      srcItem.parent = destItem.id;
+      srcItem.next = destItem.child;
 
-      if (dest.child != null) {
-        items[dest.child] = {...items[dest.child], previous: item.id};
+      if (destItem.child != null) {
+        items[destItem.child] = {...items[destItem.child], previous: srcItem.id};
       }
-      items[dest.id] = {...dest, child: item.id};
+      destItem.child = srcItem.id;
       break;
 
     default:
       console.error("unspefified relationship to destination");
       return -1;
     }
-    return items;
+
+    // plug srcItem and destItem with updated links back into array. 
+    items[srcItem.id] = srcItem;
+    items[destItem.id] = destItem;
   }
 
-  // Take the identified item out of the flow by patching the links 
-  // to cut it out. 
-  function disconnectItem(item, newItems) {
+  // Take the identified item out of the flow by patching the links to cut it out. 
+  function disconnectItem(id, items) {
+    // This function mutates the 'items' array by replacing the object references, 
+    // but it does not mutate any of the objects pointed to by the 'items' elements. 
+
+    let item = items[id]; // syntactic convenience.  Item is not mutated; 
+
     // is the item the first in its list? 
     // then we have to make its parent point to it's next sibling
     if (item.previous === null) {
-      newItems[item.parent].child = item.next;
+      items[item.parent] = {...items[item.parent], child: item.next};
     } else {
-      newItems[item.previous].next = item.next;
+      items[item.previous]= {...items[item.previous], next: item.next};
     }
+
     // Patch reverse link
     if (item.next !== null) {
-      newItems[item.next].previous = item.previous;
-      newItems[item.next].parent = item.parent;
+      items[item.next] = {...items[item.next], previous: item.previous};
     }
-    return newItems;
   }
 
-  function deleteItem(item) {
-    console.log("Delete item:", item);
+  function deleteItem(id) {
+    console.log("Delete item:", id);
     setState(prevState => {
       // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
       // Note: we don't need to actually remove the item in the front-end, so we don't.
       let newItems = prevState.items.concat();
-      return { items: disconnectItem(item, newItems), location: prevState.location };
+      disconnectItem(id, newItems); // mutates newItems, but not embedded objects.
+      return { items: newItems, location: prevState.location };
     });
     // DB operations: 
     // - edit either parent or previous sibling's link. 

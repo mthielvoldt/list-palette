@@ -16,7 +16,7 @@ function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locate
   function deleteMe(e) {
     e.preventDefault();
     e.stopPropagation();
-    deleteCB(item);
+    deleteCB(item.id);
   }
 
   function enterMe(e) {
