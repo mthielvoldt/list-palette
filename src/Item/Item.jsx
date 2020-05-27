@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import List from "../List/List";
 import DropDownButton from "./DropDownButton"
+import MergeDrop from "./MergeDrop"
 import './Item.css';
 
 function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locateCB }) {
@@ -64,7 +65,7 @@ function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locate
   }
 
   // Fired on target li .
-  function handleDropDownToggle(e) {
+  function handleDragDrop(e) {
     if (e.stopPropagation) {
       e.stopPropagation(); // Stops some browsers from redirecting.
     }
@@ -94,7 +95,7 @@ function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locate
       onDragLeave={e => removeOverUnder(e)}
       onDragEnd={e => handleDragEnd(e)}
       onDragStart={e => handleDragStart(e)}
-      onDrop={e => handleDropDownToggle(e)}
+      onDrop={e => handleDragDrop(e)}
       onClick={e => onItemClick(e)}
       style={item.checked ? { textDecoration: "line-through" } : null}
     >
@@ -102,10 +103,11 @@ function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locate
       <DropDownButton 
         viewState={(item.child) ? state.drop : "empty" }
         toggleCB={toggleDropDown} />
-      {item.text}
+      {item.text}{item.id}
       <button onClick={e => deleteMe(e)}>Delete</button>
       <button onClick={e => enterMe(e)}>Enter</button>
       <button onClick={e => duplicateMe(e)}>Dup</button>
+      <MergeDrop id={item.id}/>
       {(item.child) && (state.drop === "expanded") &&
         <List
           items={items}
