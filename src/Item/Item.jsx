@@ -104,11 +104,11 @@ function Item({ item, items, position, editState}) {
       <DropDownButton 
         viewState={(item.child) ? state.drop : "empty" }
         toggleCB={toggleDropDown} />
-      {item.text}{item.id}
+      {item.text} i{item.id} n{item.next} p{item.previous} c{item.child} pa{item.parent} 
       <button onClick={e => deleteMe(e)}>Delete</button>
       <button onClick={e => enterMe(e)}>Enter</button>
       <button onClick={e => duplicateMe(e)}>Dup</button>
-      <MergeDrop id={item.id}/>
+      <MergeDrop id={item.id} editState={editState} />
       {(item.child) && (state.drop === "expanded") &&
         <List
           items={items}

@@ -2,12 +2,12 @@ import React from 'react'
 
 
 
-function MergeDrop({ id }) {
+function MergeDrop({ id, editState }) {
 
   function handleDrop(e) {
     e.stopPropagation();
     let src = Number(e.dataTransfer.getData("startId"));
-    console.log("Merge src: %d  dest: %d", src, id );
+    editState({type: "MERGE_LISTS", data: {src: src, dest: id}});
   }
 
   return (
