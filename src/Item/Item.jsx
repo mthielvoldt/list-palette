@@ -4,31 +4,31 @@ import DropDownButton from "./DropDownButton"
 import MergeDrop from "./MergeDrop"
 import './Item.css';
 
-function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locateCB }) {
+function Item({ item, items, position, editState}) {
   const [state, setState] = useState({ drop: "collapsed" });
 
   function onItemClick(event) {
     event.stopPropagation();
     event.preventDefault();
     console.log("Toggle Item-checked. Id: ", item.id);
-    toggleCB(item.id);
+    editState({type: "TOGGLE_LIST_CHECKED", data: item.id });
   }
 
   function deleteMe(e) {
     e.preventDefault();
     e.stopPropagation();
-    deleteCB(item.id);
+    editState({type: "DELETE_LIST", data: item.id});
   }
 
   function enterMe(e) {
     e.stopPropagation();
-    locateCB(item.id);
+    editState({type: "SET_LOCATION", data: item.id});
   }
 
   function duplicateMe(e) {
     e.preventDefault();
     e.stopPropagation();
-    dupCB(item.id);
+    editState({type: "DUPLICATE_LIST", data: item.id});
   }
 
   function handleDragStart(e) {
@@ -74,16 +74,17 @@ function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locate
 
     // Don't do anything if dropping the same column we're dragging.
     if (position > startPosition) {
-      moveCB(fromId, item.id, "after");
+      editState({type: "MOVE_LIST", data: 
+        {src: fromId, dest: item.id, relation: "after"}});
     } else if (position < startPosition) {
-      moveCB(fromId, item.id, "before");
+      editState({type: "MOVE_LIST", data: 
+        {src: fromId, dest: item.id, relation: "before"}});
     }
     removeOverUnder(e);
     return false;
   }
 
   function toggleDropDown() {
-    console.log("toggleDrp");
     setState( prevState => ({...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded"}));
   }
 
@@ -113,11 +114,7 @@ function Item({ item, items, position, deleteCB, moveCB, dupCB, toggleCB, locate
           items={items}
           index={item.child}
           position={position + 1}
-          deleteCB={deleteCB}
-          moveCB={moveCB}
-          dupCB={dupCB}
-          locateCB={locateCB}
-          toggleCB={toggleCB}
+          editState={editState}
         />
       }
     </div>

@@ -13,6 +13,35 @@ const initialState = {
 function App() {
   const [state, setState] = useState(initialState);
 
+  function editState({ type, data }) {
+    console.log("Edit State - ", type, data);
+    switch (type) {
+      case 'ADD_ITEM':
+        addItem(data);
+        break;
+      case 'MOVE_LIST':
+        moveList(data.src, data.dest, data.relation);
+        break;
+      case 'DUPLICATE_LIST':
+        dupList(data);
+        break;
+      case 'DELETE_LIST':
+        deleteList(data);
+        break;
+      case 'TOGGLE_LIST_CHECKED':
+        toggleListChecked(data);
+        break;
+      case 'MERGE_LIST':
+        mergeLists(data.src, data.dest);
+        break;
+      case 'SET_LOCATION':
+        setLocation(data);
+        break;
+      default:
+        console.error("Action type not specified.");
+    }
+  }
+
   // Adds an item at the beginning of the root list
   function addItem(text) {
     console.log("Add item - parent: %s  text: %s", state.location, text);
@@ -35,8 +64,6 @@ function App() {
   }
 
   function dupList(id) {
-
-
     setState(({ items, location }) => {
 
       // Start with copying the root item - 
@@ -56,39 +83,39 @@ function App() {
        * newId = newItems.length (the end of the new array; the index for new elements)
        * parent = newItem.id (the new root).
        * previous = null - item will be located at the top of its list. 
-       */ 
-      if (items[id].child != null){
+       */
+      if (items[id].child != null) {
         copyItem(items[id].child, newItems.length, newParentItem.id, null);
-        console.log("copyItem(",items[id].child, newItems.length, newParentItem.id, null, ")");
       }
-      
 
       function copyItem(origId, newId, parent, previous) {
-
         let origItem = items[origId];
         let newItem = { ...origItem, id: newId, parent: parent, previous: previous, child: null, next: null }
         newItems.push(newItem);
 
         if (origItem.child != null) {
           newItem.child = newId + 1;
-          newId = copyItem(origItem.child, newId+1, newId, null);
+          newId = copyItem(origItem.child, newId + 1, newId, null);
         }
         if (origItem.next != null) {
           //console.log("newItem:", newItem, "newItemCopy:", newItemCopy);
           newItem.next = newId + 1; // at this point, newId will have been incremented by every child above. 
-          newId = copyItem(origItem.next, newId+1, parent, newItem.id);
+          newId = copyItem(origItem.next, newId + 1, parent, newItem.id);
         }
         //console.log("origItem, newItem:", origItem, newItem);
         return newId;
-
       }
 
-      
+
 
       console.log("duplicate Item:", newItems);
 
       return { items: newItems, location: location };
     });
+
+  }
+
+  function mergeLists(src, dest) {
 
   }
 
@@ -171,8 +198,7 @@ function App() {
     }
   }
 
-  function deleteItem(id) {
-    console.log("Delete item:", id);
+  function deleteList(id) {
     setState(prevState => {
       // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
       // Note: we don't need to actually remove the item in the front-end, so we don't.
@@ -185,9 +211,7 @@ function App() {
     // - remove the row for this item. 
   }
 
-  function moveItem(src, dest, relation) {
-    console.log("reOrder: src: %d dest: %d", src, dest);
-
+  function moveList(src, dest, relation) {
     setState(prevState => {
       let newItems = prevState.items.concat();
 
@@ -198,10 +222,9 @@ function App() {
       connectItem(src, dest, newItems, relation);
       return { items: newItems, location: prevState.location };
     });
-
   }
 
-  function toggleItemChecked(id) {
+  function toggleListChecked(id) {
     setState(prevState => {
       let newItem = { ...prevState.items[id], checked: !prevState.items[id].checked };
       let newItems = prevState.items.concat();
@@ -212,7 +235,6 @@ function App() {
   }
 
   function setLocation(newLocation) {
-    console.log(newLocation);
     setState(prevState => ({ ...prevState, location: newLocation }));
   }
 
@@ -224,17 +246,15 @@ function App() {
       <Location
         items={state.items}
         location={state.location}
-        locateCB={setLocation} />
-      <AddItemForm location={state.location} callback={addItem} />
+        editState={editState} />
+      <AddItemForm
+        location={state.location}
+        editState={editState} />
       <List
         items={state.items}
         index={state.items[state.location].child}
         position="0"
-        deleteCB={deleteItem}
-        moveCB={moveItem}
-        dupCB={dupList}
-        locateCB={setLocation}
-        toggleCB={toggleItemChecked}
+        editState={editState}
       />
     </div>
   );

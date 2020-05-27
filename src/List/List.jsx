@@ -1,7 +1,7 @@
 import React from 'react';
 import Item from '../Item/Item';
 
-function List({ items, index, position, deleteCB, moveCB, dupCB, toggleCB, locateCB }) {
+function List({ items, index, position, editState }) {
 
   // build a return array
   let a = [];
@@ -14,11 +14,7 @@ function List({ items, index, position, deleteCB, moveCB, dupCB, toggleCB, locat
       position={position++}
       items={items}
       item={item}
-      deleteCB={deleteCB}
-      moveCB={moveCB}
-      dupCB={dupCB}
-      toggleCB={toggleCB}
-      locateCB={locateCB}
+      editState={editState}
     />;
     index = item.next;
   }

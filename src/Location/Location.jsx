@@ -1,19 +1,19 @@
 import React from "react";
 import "./Location.css";
 
-function LocationButton( {text, location, locateCB}) {
+function LocationButton( {text, location, editState}) {
 
 
     return (
         <button
-            onClick={() => {locateCB(location)}} >
+            onClick={() => {editState({type:"SET_LOCATION", data:location})}} >
             {text}
             </button>
     );
 
 }
 
-function Location({ items, location, locateCB }) {
+function Location({ items, location, editState }) {
 
     let a = [];
     let i = 50;
@@ -24,7 +24,7 @@ function Location({ items, location, locateCB }) {
             key={i}
             text={items[location].text+'>'}
             location={location}
-            locateCB={locateCB} />
+            editState={editState} />
 
         location = items[location].parent;
     }
