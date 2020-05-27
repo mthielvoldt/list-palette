@@ -185,17 +185,17 @@ function App() {
     // - remove the row for this item. 
   }
 
-  function moveItem(source, dest, relation) {
-    console.log("reOrder: src: %d dest: %d", source, dest);
+  function moveItem(src, dest, relation) {
+    console.log("reOrder: src: %d dest: %d", src, dest);
 
     setState(prevState => {
       let newItems = prevState.items.concat();
 
       // cut the item out if it's old position.  
       // do this first because connectItem() clobbers source links. 
-      disconnectItem(newItems[source], newItems);
+      disconnectItem(src, newItems);
       // re-link to place source item in new position. 
-      connectItem(newItems[source], newItems[dest], newItems, relation);
+      connectItem(src, dest, newItems, relation);
       return { items: newItems, location: prevState.location };
     });
 
