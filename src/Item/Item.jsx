@@ -5,7 +5,8 @@ import MergeDrop from "./MergeDrop"
 import './Item.css';
 
 function Item({ item, items, position, editState}) {
-  const [state, setState] = useState({ drop: "collapsed" });
+  const [viewState, setViewState] = useState({ drop: "collapsed", edit: false});
+  const [text, setText] = useState(item.text);
 
   function onItemClick(event) {
     event.stopPropagation();
@@ -25,10 +26,16 @@ function Item({ item, items, position, editState}) {
     editState({type: "SET_LOCATION", data: item.id});
   }
 
-  function duplicateMe(e) {
-    e.preventDefault();
+  function handleKeyDown(e) {
+    if (e.key === "Enter") {
+      editState({type: "EDIT_ITEM", data:{ id: item.id, text: text}});
+      setViewState({...viewState, edit: false});
+    }
+  }
+  function editMe(e) {
     e.stopPropagation();
-    editState({type: "DUPLICATE_LIST", data: item.id});
+    console.log("edit mode")
+    setViewState( prevState => ({...prevState, edit: true}));
   }
 
   function handleDragStart(e) {
@@ -85,7 +92,7 @@ function Item({ item, items, position, editState}) {
   }
 
   function toggleDropDown() {
-    setState( prevState => ({...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded"}));
+    setViewState( prevState => ({...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded"}));
   }
 
   return (
@@ -102,14 +109,22 @@ function Item({ item, items, position, editState}) {
     >
 
       <DropDownButton 
-        viewState={(item.child) ? state.drop : "empty" }
+        viewState={(item.child) ? viewState.drop : "empty" }
         toggleCB={toggleDropDown} />
-      {item.text} i{item.id} n{item.next} p{item.previous} c{item.child} pa{item.parent} 
+      {(viewState.edit) 
+        ? <input 
+            value={text} 
+            onChange={(e) => {setText(e.target.value)}}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            /> 
+        : item.text} 
+      i{item.id} n{item.next} p{item.previous} c{item.child} pa{item.parent} 
       <button onClick={e => deleteMe(e)}>Delete</button>
       <button onClick={e => enterMe(e)}>Enter</button>
-      <button onClick={e => duplicateMe(e)}>Dup</button>
+      <button onClick={e => editMe(e)}>Edit</button>
       <MergeDrop id={item.id} editState={editState} />
-      {(item.child) && (state.drop === "expanded") &&
+      {(item.child) && (viewState.drop === "expanded") &&
         <List
           items={items}
           index={item.child}

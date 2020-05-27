@@ -3,7 +3,7 @@ import Location from "../Location/Location"
 import AddItemForm from "../AddItemForm/AddItemForm";
 import List from "../List/List";
 import mockQuery, { toSparseDoubleLink } from '../data.js'
-import {dupHelper, mergeHelper, connectItem, disconnectItem} from './Helpers'
+import { dupHelper, mergeHelper, connectItem, disconnectItem } from './Helpers'
 import './App.css';
 
 const initialState = {
@@ -19,6 +19,9 @@ function App() {
     switch (type) {
       case 'ADD_ITEM':
         addItem(data);
+        break;
+      case 'EDIT_ITEM':
+        editItem(data.id, data.text);
         break;
       case 'MOVE_LIST':
         moveList(data.src, data.dest, data.relation);
@@ -64,11 +67,17 @@ function App() {
     // DB: update parent's child link  (DB doesn't need reverse link updated)
   }
 
+  function editItem(id, text) {
+    let newItems = state.items.concat();
+    newItems[id].text = text;
+    setState({...state, items: newItems});
+  }
+
   function dupList(id) {
     setState(({ items, location }) => {
       let newItems = items.concat();
 
-      dupHelper(id, location, newItems );
+      dupHelper(id, location, newItems);
 
       console.log("duplicate Item:", newItems);
 
