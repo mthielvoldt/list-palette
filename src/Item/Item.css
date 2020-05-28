@@ -14,10 +14,9 @@
     border-bottom: 2px solid blue;
   }
   
-  .item button {
+  .item .icon {
     float: right;
-  }
-
-  .merge-icon {
-    float: right;
+    height: 1.75rem;
+    width: 1.75rem;
+    padding-left: 3px;
   }

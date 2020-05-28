@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import List from "../List/List";
 import DropDownButton from "./DropDownButton"
-import MergeDrop from "./MergeDrop"
 import './Item.css';
+import ItemIcon from './ItemIcon';
 
 function Item({ item, items, position, editState}) {
   const [viewState, setViewState] = useState({ drop: "collapsed", edit: false});
@@ -24,6 +24,12 @@ function Item({ item, items, position, editState}) {
   function enterMe(e) {
     e.stopPropagation();
     editState({type: "SET_LOCATION", data: item.id});
+  }
+
+  function handleMergeIconDrop(e) {
+    e.stopPropagation();
+    let src = Number(e.dataTransfer.getData("startId"));
+    editState({type: "MERGE_LISTS", data: {src: src, dest: item.id}});
   }
 
   function handleKeyDown(e) {
@@ -119,11 +125,12 @@ function Item({ item, items, position, editState}) {
             autoFocus
             /> 
         : item.text} 
-      i{item.id} n{item.next} p{item.previous} c{item.child} pa{item.parent} 
-      <button onClick={e => deleteMe(e)}>Delete</button>
-      <button onClick={e => enterMe(e)}>Enter</button>
-      <button onClick={e => editMe(e)}>Edit</button>
-      <MergeDrop id={item.id} editState={editState} />
+
+      <ItemIcon type="delete" onClick={e => deleteMe(e)}/>
+      <ItemIcon type="edit" onClick={e => editMe(e)}/>
+      <ItemIcon type="focus" onClick={e => enterMe(e)}/>
+      <ItemIcon type="merge" onDrop={e => handleMergeIconDrop(e)}/>
+
       {(item.child) && (viewState.drop === "expanded") &&
         <List
           items={items}
