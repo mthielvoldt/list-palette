@@ -43,7 +43,7 @@ app.get('/logout', async (req, res) => {
     res.redirect('/');
 });
 
-app.post('/login', passport.authenticate('local', {failureRedirect: '/login', successRedirect: '/'}));
+app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html', successRedirect: '/'}));
 
 app.post('/register', async (req, res) => {
     logReq(req);
@@ -59,11 +59,11 @@ app.post('/register', async (req, res) => {
     try {
         const response = await db.query(
             "INSERT INTO users(email, name, password) VALUES($1, $2, $3) RETURNING *", params);
-        console.log("New user:", response.rows[0].email);
+        console.log("New user:", response.rows[0].name, response.rows[0].email);
 
         req.login(response.rows[0], (err) => {
             if (err) {
-                console.log(err);
+                console.log("Error while trying to req.login", err);
             }
             res.redirect('/');
         });

@@ -23,7 +23,7 @@ function logReq(req) {
     if (req.user == null) {
         console.log(req.method, req.url, ": no user");
     } else {
-        console.log(req.method, req.url, ":", req.user.name, ":", req.user.id);
+        console.log(req.method, req.url, ":", req.user.name, ":", req.user.user_id);
     }
 }
 module.exports = {
