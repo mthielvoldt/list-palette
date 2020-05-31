@@ -1,18 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Location from "../Location/Location"
 import AddItemForm from "../AddItemForm/AddItemForm";
 import List from "../List/List";
-import mockQuery, { toSparseDoubleLink } from '../data.js'
-import { dupHelper, mergeHelper, connectItem, disconnectItem } from './Helpers'
+import toSparseDoubleLink from '../formatData.js';
+import { dupHelper, mergeHelper, connectItem, disconnectItem } from './Helpers';
 import './App.css';
 
-const initialState = {
-  items: toSparseDoubleLink(mockQuery),
-  location: 0
-};
 
 function App() {
-  const [state, setState] = useState(initialState);
+  const [state, setState] = useState({items: [{id: 0, text: "home", next: null, child: null}], location: 0});
+
+  useEffect(() => {
+    fetch("/mock")
+    .then(res => res.json())
+    .then(toSparseDoubleLink)
+    .then( sparse => {
+      setState( prevState => ({...prevState, items: sparse }))
+    })
+    .catch(console.log);
+  }, []);
 
   function editState({ type, data }) {
     console.log("Edit State - ", type, data);
@@ -70,7 +76,7 @@ function App() {
   function editItem(id, text) {
     let newItems = state.items.concat();
     newItems[id].text = text;
-    setState({...state, items: newItems});
+    setState({ ...state, items: newItems });
   }
 
   function dupList(id) {
@@ -137,7 +143,7 @@ function App() {
   return (
     <div className="container">
       <div className="heading">
-        <h1>ListPalette</h1>
+        <h1>List Palette</h1>
       </div>
       <Location
         items={state.items}
