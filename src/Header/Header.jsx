@@ -4,8 +4,8 @@ function NavBar({ user }) {
 
   const signInUp = (
     <>
-      <button className="btn btn-success mx-1 my-2 my-sm-0" type="submit">Sign in</button>
-      <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Sign up</button>
+      <a className="btn btn-success mx-1 my-2 my-sm-0" href="login.html">Sign in</a>
+      <a className="btn btn-outline-success my-2 my-sm-0" href="register.html">Sign up</a>
     </>
   );
 
