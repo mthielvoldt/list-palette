@@ -30,7 +30,7 @@ function AddItemForm({ editState }) {
         type="text" 
         value={inputText} />
       <button onClick={addItem}>
-        <span>Add</span>
+        <span className="add-span">Add</span>
       </button>
     </div>
   );

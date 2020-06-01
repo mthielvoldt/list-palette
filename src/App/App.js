@@ -2,22 +2,28 @@ import React, { useState, useEffect } from "react";
 import Location from "../Location/Location"
 import AddItemForm from "../AddItemForm/AddItemForm";
 import List from "../List/List";
+import Header from "../Header/Header";
 import toSparseDoubleLink from '../formatData.js';
 import { dupHelper, mergeHelper, connectItem, disconnectItem } from './Helpers';
 import './App.css';
 
+const initialState = {
+  items: [{ id: 0, text: "home", next: null, child: null }],
+  location: 0,
+  user: null
+}
 
 function App() {
-  const [state, setState] = useState({items: [{id: 0, text: "home", next: null, child: null}], location: 0});
+  const [state, setState] = useState(initialState);
 
   useEffect(() => {
     fetch("/mock")
-    .then(res => res.json())
-    .then(toSparseDoubleLink)
-    .then( sparse => {
-      setState( prevState => ({...prevState, items: sparse }))
-    })
-    .catch(console.log);
+      .then(res => res.json())
+      .then(toSparseDoubleLink)
+      .then(sparse => {
+        setState(prevState => ({ ...prevState, items: sparse }))
+      })
+      .catch(console.log);
   }, []);
 
   function editState({ type, data }) {
@@ -141,24 +147,25 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <div className="heading">
-        <h1>List Palette</h1>
+    <>
+      <Header user={state.user} />
+      <div className="container">
+
+        <Location
+          items={state.items}
+          location={state.location}
+          editState={editState} />
+        <AddItemForm
+          location={state.location}
+          editState={editState} />
+        <List
+          items={state.items}
+          index={state.items[state.location].child}
+          position="0"
+          editState={editState}
+        />
       </div>
-      <Location
-        items={state.items}
-        location={state.location}
-        editState={editState} />
-      <AddItemForm
-        location={state.location}
-        editState={editState} />
-      <List
-        items={state.items}
-        index={state.items[state.location].child}
-        position="0"
-        editState={editState}
-      />
-    </div>
+    </>
   );
 }
 
