@@ -6,6 +6,7 @@ import Header from "../Header/Header";
 import toSparseDoubleLink from '../formatData.js';
 import { dupHelper, mergeHelper, connectItem, disconnectItem } from './Helpers';
 import './App.css';
+const axios = require('axios').default;
 
 const initialState = {
   items: [{ id: 0, text: "home", next: null, child: null }],
@@ -16,14 +17,21 @@ const initialState = {
 function App() {
   const [state, setState] = useState(initialState);
 
+  function updateItems( newItems ) {
+    setState(prevState => ({ ...prevState, items: newItems }));
+  }
+
   useEffect(() => {
-    fetch("/mock")
-      .then(res => res.json())
-      .then(toSparseDoubleLink)
-      .then(sparse => {
-        setState(prevState => ({ ...prevState, items: sparse }))
+      axios.get("/mock")
+      .then(res => {
+        console.log(res.data);
+        return toSparseDoubleLink(res.data);
       })
-      .catch(console.log);
+      .then(updateItems)
+      .catch(e => {
+        console.error("AxiosCatch", e);
+      });
+
   }, []);
 
   function editState({ type, data }) {
