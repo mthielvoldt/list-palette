@@ -17,20 +17,25 @@ const initialState = {
 function App() {
   const [state, setState] = useState(initialState);
 
-  function updateItems( newItems ) {
+  function updateItems(newItems) {
     setState(prevState => ({ ...prevState, items: newItems }));
   }
 
   useEffect(() => {
-      axios.get("/mock")
+    axios.get("/items")
+      .catch(e => {
+        console.error("AxiosCatch", e);
+        return {data:initialState.items};
+      })
       .then(res => {
         console.log(res.data);
         return toSparseDoubleLink(res.data);
       })
-      .then(updateItems)
       .catch(e => {
-        console.error("AxiosCatch", e);
-      });
+        console.error("updateItems", e);
+      })
+      .then(updateItems);
+      
 
   }, []);
 

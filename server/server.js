@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 
 const db = require('./db');
+const query = require('./querys');
 const passport = require('./passport');
 const crypt = require('./crypt')
 const {logReq, validateRegistration} = require('./utils');
@@ -37,6 +38,19 @@ app.get('/', async (req, res) => {
     }
 });
 
+app.get('/items', async (req, res) => {
+    logReq(req);
+    if (!req.isAuthenticated()) {
+        // create a new anonymous user
+        res.status(403).send("User not logged in");
+        return;
+    }
+    console.log(query.getItems, req.user.user_id);
+    const qRes = await db.query(query.getItems, [req.user.user_id]);
+    console.log(qRes.rows);
+    res.send(qRes.rows);
+});
+
 app.get('/logout', async (req, res) => {
     logReq(req);
     req.logout();       // torches the session ID. 
@@ -48,20 +62,20 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html
 app.post('/register', async (req, res) => {
     logReq(req);
 
-    const invalidReason = validateRegistration(req.body.email, req.body.name, req.body.password);
+    const name = req.body.name, email = req.body.email, pass = req.body.password;
+
+    const invalidReason = validateRegistration(email, name, pass);
     if (invalidReason) {
         res.status(400).send(invalidReason);
         return;
     }
 
-    const hash = await crypt.hash(req.body.password);
-    const params = [req.body.email, req.body.name, hash];
+    const hash = await crypt.hash(pass);
     try {
-        const response = await db.query(
-            "INSERT INTO users(email, name, password) VALUES($1, $2, $3) RETURNING *", params);
-        console.log("New user:", response.rows[0].name, response.rows[0].email);
+        const response = await db.query(query.insertUser, [email, name, hash]);
+        console.log("New user:", response.rows[0].user_id, email);
 
-        req.login(response.rows[0], (err) => {
+        req.login({user_id: response.rows[0].user_id, name: name, email: email}, (err) => {
             if (err) {
                 console.log("Error while trying to req.login", err);
             }

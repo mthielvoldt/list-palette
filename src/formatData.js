@@ -27,8 +27,6 @@ function toSparseDoubleLink(packed) {
         }
     }
     reverseLink(0, null, null);
-
-    console.log("Initial Data:", sparse);
     return sparse;
 }
 
