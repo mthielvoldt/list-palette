@@ -11,7 +11,6 @@ function Item({ item, items, position, editState}) {
   function onItemClick(event) {
     event.stopPropagation();
     event.preventDefault();
-    console.log("Toggle Item-checked. Id: ", item.id);
     editState({type: "TOGGLE_LIST_CHECKED", data: item.id });
   }
 
@@ -111,7 +110,7 @@ function Item({ item, items, position, editState}) {
       onDragStart={e => handleDragStart(e)}
       onDrop={e => handleDragDrop(e)}
       onClick={e => onItemClick(e)}
-      style={item.checked ? { textDecoration: "line-through" } : null}
+      style={item.checked == 'checked' ? { textDecoration: "line-through" } : null}
     >
 
       <DropDownButton 

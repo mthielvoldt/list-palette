@@ -26,7 +26,23 @@ function logReq(req) {
         console.log(req.method, req.url, ":", req.user.name, ":", req.user.user_id);
     }
 }
+
+function formatDbData(user_id, items) {
+
+    let dbData = items.reduce( (params, item) => {
+        params[1].push(item.id);
+        params[2].push(item.text);
+        params[3].push(item.checked);
+        params[4].push(item.next);
+        params[5].push(item.child);
+        return params;
+    }, [user_id,[],[],[],[],[]]);
+
+    return dbData;
+}
+
 module.exports = {
     validateRegistration: validateRegistration, 
-    logReq: logReq
+    logReq: logReq, 
+    formatDbData: formatDbData
 }

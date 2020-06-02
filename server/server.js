@@ -7,7 +7,7 @@ const db = require('./db');
 const query = require('./querys');
 const passport = require('./passport');
 const crypt = require('./crypt')
-const {logReq, validateRegistration} = require('./utils');
+const { logReq, validateRegistration, formatDbData } = require('./utils');
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -45,9 +45,9 @@ app.get('/items', async (req, res) => {
         res.status(403).send("User not logged in");
         return;
     }
-    console.log(query.getItems, req.user.user_id);
+    //console.log(query.getItems, req.user.user_id);
     const qRes = await db.query(query.getItems, [req.user.user_id]);
-    console.log(qRes.rows);
+    //console.log(qRes.rows);
     res.send(qRes.rows);
 });
 
@@ -57,7 +57,58 @@ app.get('/logout', async (req, res) => {
     res.redirect('/');
 });
 
-app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html', successRedirect: '/'}));
+// a route for running tests 
+app.put('/test', async (req, res) => {
+    logReq(req);
+    res.send("received!");
+    if (!req.isAuthenticated()) {
+        // create a new anonymous user
+        req.user = { user_id: 2 };
+    }
+
+    //const qRes = await db.query(query.updateItems, [[1, 2, 3, 4, 5],['It','was','the','best','of']]);
+
+
+
+});
+
+// creates a new item
+app.put('/items', async (req, res) => {
+    logReq(req);
+    res.send("received!");
+    if (!req.isAuthenticated()) {
+        // create a new anonymous user
+        //res.status(403).send("User not logged in");
+        //return;
+        req.user = { user_id: 25 };
+    }
+
+    let promises = [];
+
+    if (typeof req.body.insert != 'undefined' && req.body.insert.length > 0) {
+        let insertData = formatDbData(req.user.user_id, req.body.insert);
+        console.log("insertData:", insertData);
+        promises.push(db.query(query.insertItems, insertData));
+    }
+
+    if (typeof req.body.update != 'undefined' && req.body.update.length > 0) {
+        let updateData = formatDbData(req.user.user_id, req.body.update);
+        console.log("updateData:", updateData);
+        promises.push(db.query(query.updateItems, updateData));
+    }
+    Promise.all(promises)
+        .then( (results) => {
+            results.forEach(result => {
+                console.log(result.command, result.rows);
+            });
+        })
+        .catch(console.error);
+
+
+});
+
+
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login.html', successRedirect: '/' }));
 
 app.post('/register', async (req, res) => {
     logReq(req);
@@ -75,7 +126,7 @@ app.post('/register', async (req, res) => {
         const response = await db.query(query.insertUser, [email, name, hash]);
         console.log("New user:", response.rows[0].user_id, email);
 
-        req.login({user_id: response.rows[0].user_id, name: name, email: email}, (err) => {
+        req.login({ user_id: response.rows[0].user_id, name: name, email: email }, (err) => {
             if (err) {
                 console.log("Error while trying to req.login", err);
             }

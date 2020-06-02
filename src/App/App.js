@@ -25,7 +25,7 @@ function App() {
     axios.get("/items")
       .catch(e => {
         console.error("AxiosCatch", e);
-        return {data:initialState.items};
+        return { data: initialState.items };
       })
       .then(res => {
         console.log(res.data);
@@ -35,7 +35,7 @@ function App() {
         console.error("updateItems", e);
       })
       .then(updateItems);
-      
+
 
   }, []);
 
@@ -80,21 +80,25 @@ function App() {
         id: prevItems.length,
         text: text,
         checked: false,
+        child: null
       };
 
       let newItems = prevItems.concat(newItem);
 
       connectItem(newItem.id, prevState.location, newItems, "child");
 
+      // DB: Create new row for new Item, and also updates parent (no 'previous' link in DB). 
+      const dbData = { insert: [newItems[newItem.id]], update: [newItems[newItem.parent]] };
+      axios.put("/items", dbData);
+
       return { items: newItems, location: prevState.location };
     });
-    // DB: Create new row for new Item. 
-    // DB: update parent's child link  (DB doesn't need reverse link updated)
   }
 
   function editItem(id, text) {
     let newItems = state.items.concat();
     newItems[id].text = text;
+    axios.put("/items", { update: [newItems[id]] });
     setState({ ...state, items: newItems });
   }
 
@@ -102,8 +106,8 @@ function App() {
     setState(({ items, location }) => {
       let newItems = items.concat();
 
-      dupHelper(id, location, newItems);
-
+      let dbChanges = dupHelper(id, location, newItems);
+      axios.put('/items', dbChanges);
       console.log("duplicate Item:", newItems);
 
       return { items: newItems, location: location };
@@ -114,7 +118,8 @@ function App() {
   function mergeLists(src, dest) {
     setState(({ items, location }) => {
       let newItems = items.concat();
-      mergeHelper(src, dest, newItems);
+      let dbChanges = mergeHelper(src, dest, newItems);
+      axios.put('/items', dbChanges);
       return { items: newItems, location: location };
     });
   }
@@ -124,7 +129,8 @@ function App() {
       // we can't mutate the original array, so we copy the whole damn thing first (Hate this)
       // Note: we don't need to actually remove the item in the front-end, so we don't.
       let newItems = prevState.items.concat();
-      disconnectItem(id, newItems); // mutates newItems, but not embedded objects.
+      let dbChanges = disconnectItem(id, newItems); // mutates newItems, but not embedded objects.
+      axios.put("/items", dbChanges);
       return { items: newItems, location: prevState.location };
     });
     // DB operations: 
@@ -146,13 +152,11 @@ function App() {
   }
 
   function toggleListChecked(id) {
-    setState(prevState => {
-      let newItem = { ...prevState.items[id], checked: !prevState.items[id].checked };
-      let newItems = prevState.items.concat();
-      newItems[id] = newItem;
+    let newItems = state.items.concat();
+    newItems[id].checked = (newItems[id].checked == 'checked') ? 'unchecked' : 'checked';
+    axios.put('/items', { update: [newItems[id]] });
 
-      return { items: newItems, location: prevState.location };
-    });
+    setState({ items: newItems, location: state.location });
   }
 
   function setLocation(newLocation) {
