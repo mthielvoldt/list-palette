@@ -41,8 +41,9 @@ app.get('/', async (req, res) => {
 app.get('/items', async (req, res) => {
     logReq(req);
     if (!req.isAuthenticated()) {
-        // create a new anonymous user
-        res.status(401).send("User not logged in");
+        // send the default user's data
+        const qRes = await db.query(query.getItems, [process.env.DEFAULT_USER_ID]);
+        res.send({ user: null, items: qRes.rows });
         return;
     }
     //console.log(query.getItems, req.user.user_id);
@@ -61,7 +62,7 @@ app.get('/logout', async (req, res) => {
 app.put('/items', async (req, res) => {
     logReq(req);
     if (!req.isAuthenticated()) {
-        res.status(403).send("User not logged in");
+        res.status(401).send("User not logged in");
         return;
     }
 
@@ -89,7 +90,7 @@ app.put('/items', async (req, res) => {
             });
             res.send("Changes saved");
         })
-        .catch( err => {
+        .catch(err => {
             console.error(err);
             res.status(500).send("items not saved.");
         });
@@ -124,7 +125,7 @@ app.post('/register', async (req, res) => {
             if (err) {
                 console.log("Error while trying to req.login", err);
             }
-            res.send({name: name});
+            res.send({ name: name });
         });
     } catch (err) {
         console.log("Error while registering new user");
@@ -135,29 +136,3 @@ app.post('/register', async (req, res) => {
         }
     }
 });
-
-app.get('/mock', (req, res) => {
-    logReq(req);
-    const mockQuery = [
-        { id: 0, next: null, child: 1, text: "Home", checked: false },
-        { id: 1, next: 3, child: 6, text: "Staples", checked: false },
-        { id: 3, next: null, child: 4, text: "Chicken Parm", checked: false },
-        { id: 5, next: 2, child: null, text: "Produce", checked: false },
-        { id: 6, next: 5, child: 16, text: "Dairy", checked: false },
-        { id: 2, next: null, child: 13, text: "Meats", checked: false },
-        { id: 12, next: null, child: null, text: "Ground Beef", checked: false },
-        { id: 7, next: 12, child: null, text: "Bacon", checked: true },
-        { id: 13, next: 7, child: null, text: "Sandwich Meat", checked: false },
-        { id: 4, next: 8, child: 11, text: "Meats", checked: false },
-        { id: 8, next: 9, child: 14, text: "Dairy", checked: false },
-        { id: 9, next: null, child: 10, text: "Baking", checked: false },
-        { id: 10, next: null, child: null, text: "Bread crumbs", checked: false },
-        { id: 11, next: null, child: null, text: "Chicken breast", checked: false },
-        { id: 14, next: 15, child: null, text: "Eggs", checked: false },
-        { id: 15, next: null, child: null, text: "Parmesan cheese", checked: false },
-        { id: 16, next: 17, child: null, text: "Milk", checked: false },
-        { id: 17, next: null, child: null, text: "Eggs", checked: true },
-    ];
-    res.send(mockQuery);
-})
-

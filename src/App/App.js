@@ -5,12 +5,11 @@ import List from "../List/List";
 import Header from "../Header/Header";
 import toSparseDoubleLink from '../formatData.js';
 import { dupHelper, mergeHelper, connectItem, disconnectItem } from './Helpers';
-import initialItems from "../initialItems";
 import './App.css';
 const axios = require('axios').default;
 
 const initialState = {
-  items: initialItems,
+  items: [{ id: 0, text: "Home", checked: "false", next: null, child: null }],
   location: 0,
   user: null
 }
@@ -22,7 +21,7 @@ function App() {
   function loadItems() {
     axios.get("/items")
       .catch(e => {
-        console.warn("Problem fetching item from server.\n", e);
+        console.warn("Could not fetch items from server.\n", e);
         return { data: initialState };
       })
       .then(res => {
@@ -38,6 +37,19 @@ function App() {
     setState(initialState);
   }
 
+  async function save(dbChanges) {
+    return (
+      axios.put('/items', dbChanges)
+        .catch(err => {
+          console.log(err);
+          if (err.response.status === 401) {
+            console.log("setting state.user to null");
+            setState(prevState => ({ ...prevState, user: null }));
+          }
+        })
+    );
+  }
+
   function saveAllItems(user) {
     // when a new user signs up, let's save all the data they have. 
     // The front end works with a sparse array - when an item is deleted, it's 
@@ -45,10 +57,10 @@ function App() {
     // we filter out all the empty items before sending. 
     const packed = state.items.filter(
       item => (typeof (item.id) !== undefined && item.id > 0));
-    const dbChanges = {insert: packed, update: [state.items[0]]};
-    axios.put('/items', dbChanges)
-    .then(loadItems)
-    .catch(console.log);
+    const dbChanges = { insert: packed, update: [state.items[0]] };
+    save(dbChanges)
+      .then(loadItems)
+      .catch(console.log);
   }
 
   function editState({ type, data }) {
@@ -100,8 +112,8 @@ function App() {
     connectItem(newItem.id, state.location, newItems, "child");
 
     // DB: Create new row for new Item, and also updates parent (no 'previous' link in DB). 
-    const dbData = { insert: [newItems[newItem.id]], update: [newItems[newItem.parent]] };
-    axios.put("/items", dbData);
+    const dbChanges = { insert: [newItems[newItem.id]], update: [newItems[newItem.parent]] };
+    save(dbChanges);
 
     setState({ ...state, items: newItems });
   }
@@ -109,31 +121,31 @@ function App() {
   function editItem(id, text) {
     let newItems = state.items.concat();
     newItems[id].text = text;
-    axios.put("/items", { update: [newItems[id]] });
+    save({ update: [newItems[id]] });
     setState({ ...state, items: newItems });
   }
 
   function dupList(id) {
     let newItems = state.items.concat();
     let dbChanges = dupHelper(id, state.location, newItems);
-    axios.put('/items', dbChanges);
     setState({ ...state, items: newItems });
+    save(dbChanges);
   }
 
   function mergeLists(src, dest) {
     let newItems = state.items.concat();
     let dbChanges = mergeHelper(src, dest, newItems);
-    axios.put('/items', dbChanges);
     setState({ ...state, items: newItems });
+    save(dbChanges);
   }
 
   function deleteList(id) {
     // Note: we don't need to actually remove the item in the front-end, so we don't.
     let newItems = state.items.concat();
     let dbChanges = disconnectItem(id, newItems); // mutates newItems, but not embedded objects.
-    Object.assign(dbChanges, {delete: id});
-    axios.put("/items", dbChanges);
+    Object.assign(dbChanges, { delete: id });
     setState({ ...state, items: newItems });
+    save(dbChanges);
 
     // DB operations: 
     // - edit either parent or previous sibling's link. 
@@ -148,16 +160,15 @@ function App() {
     let dbChanges = disconnectItem(src, newItems);
     // re-link to place source item in new position. 
     dbChanges = connectItem(src, dest, newItems, relation, dbChanges);
-    axios.put('/items', dbChanges);
     setState({ ...state, items: newItems });
+    save(dbChanges);
   }
 
   function toggleListChecked(id) {
     let newItems = state.items.concat();
     newItems[id].checked = (newItems[id].checked === 'checked') ? 'unchecked' : 'checked';
-    axios.put('/items', { update: [newItems[id]] });
-
     setState({ ...state, items: newItems });
+    save({ update: [newItems[id]] });
   }
 
   function setLocation(newLocation) {
@@ -169,7 +180,7 @@ function App() {
       <Header
         user={state.user}
         loadItemsCB={loadItems}
-        logOutCB={logOut} 
+        logOutCB={logOut}
         saveAllItemsCB={saveAllItems} />
       <div className="container">
 
