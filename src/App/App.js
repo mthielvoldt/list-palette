@@ -41,11 +41,11 @@ function App() {
     return (
       axios.put('/items', dbChanges)
         .catch(err => {
-          console.log(err);
           if (err.response.status === 401) {
-            console.log("setting state.user to null");
+            console.log("You are not signed in, so these changes are not saved.");
             setState(prevState => ({ ...prevState, user: null }));
           }
+          return err;
         })
     );
   }
@@ -97,8 +97,6 @@ function App() {
 
   // Adds an item at the beginning of the root list
   function addItem(text) {
-
-    console.log("Add item - parent: %s  text: %s", state.location, text);
 
     let newItem = {
       id: state.items.length,
