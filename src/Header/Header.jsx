@@ -77,7 +77,7 @@ function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
             <li>Open an item to add sub-items.</li>
             <li>Merge items by dragging one into another's dropzone</li>
           </ul>
-          <p>You are welcome to get acquainted with the example lists, but if you want to save your work for later, you'll need an account, which is free.</p>
+          <p>Feel free to edit the example lists.  To save your work for later, sign up for an account.</p>
         </Dropdown>
       }
     </header>
