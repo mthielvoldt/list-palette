@@ -10,12 +10,37 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192 48x48"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "48x48"
+    },
+    {
+      "src": "/icon/delete-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "24x24"
+    },
+    {
+      "src": "/icon/edit-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "24x24"
+    },
+    {
+      "src": "/icon/focus-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "24x24"
+    },
+    {
+      "src": "/icon/merge-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "24x24"
+    },
+    {
+      "src": "/icon/expand-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "24x24"
     }
   ],
   "start_url": ".",

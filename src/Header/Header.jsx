@@ -3,6 +3,7 @@ import Dropdown from './Dropdown';
 import RegisterForm from '../AccountTools/RegisterForm';
 import LoginForm from '../AccountTools/LoginForm';
 import AccountMenu from '../AccountTools/AccountMenu';
+import About from '../About/About';
 
 function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
   const [viewState, setViewState] = useState("none");
@@ -40,7 +41,7 @@ function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
   return (
     <header className="fixed-top">
       <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-        <a className="navbar-brand" href="/">List Palette</a>
+        <a className="navbar-brand" href="/"><img className="mr-2" src="logo192.svg" alt="List palette logo" height="48" />List Palette</a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -70,14 +71,7 @@ function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
       }
       {(viewState === "about") &&
         <Dropdown align="left" closeCB={clearViewState}>
-          <p>ListPalette is a place where you can organize lists and mix them together.  You can:</p>
-          <ul>
-            <li>Drag items to re-order them.</li>
-            <li>Expand items to view sub-items</li>
-            <li>Open an item to add sub-items.</li>
-            <li>Merge items by dragging one into another's dropzone</li>
-          </ul>
-          <p>Feel free to edit the example lists.  To save your work for later, sign up for an account.</p>
+          <About/>
         </Dropdown>
       }
     </header>
