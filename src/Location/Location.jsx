@@ -6,6 +6,7 @@ function LocationButton( {text, location, editState}) {
 
     return (
         <button
+            className="location-button"
             onClick={() => {editState({type:"SET_LOCATION", data:location})}} >
             {text}
             </button>

@@ -11,33 +11,32 @@ const axios = require('axios').default;
 const initialState = {
   items: [{ id: 0, text: "home", next: null, child: null }],
   location: 0,
-  user: null
+  user : null
 }
 
 function App() {
   const [state, setState] = useState(initialState);
+  useEffect(loadItems, []);
 
-  function updateItems(newItems) {
-    setState(prevState => ({ ...prevState, items: newItems }));
-  }
-
-  useEffect(() => {
+  function loadItems() {
     axios.get("/items")
       .catch(e => {
-        console.error("AxiosCatch", e);
-        return { data: initialState.items };
+        console.warn("Problem fetching item from server.\n", e);
+        return { data: initialState };
       })
       .then(res => {
-        console.log(res.data);
-        return toSparseDoubleLink(res.data);
+        console.log("server response:", res.data);
+        setState( { items: toSparseDoubleLink(res.data.items), user : res.data.user , location: 0 });
       })
       .catch(e => {
-        console.error("updateItems", e);
-      })
-      .then(updateItems);
+        console.error("Error creating items array.\n", e);
+      });
+  }
 
-
-  }, []);
+  function logOut() {
+    axios.get('/logout');
+    setState(initialState);
+  }
 
   function editState({ type, data }) {
     console.log("Edit State - ", type, data);
@@ -141,7 +140,7 @@ function App() {
 
   function toggleListChecked(id) {
     let newItems = state.items.concat();
-    newItems[id].checked = (newItems[id].checked == 'checked') ? 'unchecked' : 'checked';
+    newItems[id].checked = (newItems[id].checked === 'checked') ? 'unchecked' : 'checked';
     axios.put('/items', { update: [newItems[id]] });
 
     setState({ ...state, items: newItems });
@@ -153,7 +152,10 @@ function App() {
 
   return (
     <>
-      <Header user={state.user} />
+      <Header 
+        user ={state.user } 
+        loadItemsCB={loadItems} 
+        logOutCB={logOut} />
       <div className="container">
 
         <Location

@@ -1,0 +1,11 @@
+
+.dropdown-row {
+  position: relative;
+  top: 37px;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.dropdown-row .card {
+  border-radius: 20px;
+}

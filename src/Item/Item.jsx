@@ -110,7 +110,7 @@ function Item({ item, items, position, editState}) {
       onDragStart={e => handleDragStart(e)}
       onDrop={e => handleDragDrop(e)}
       onClick={e => onItemClick(e)}
-      style={item.checked == 'checked' ? { textDecoration: "line-through" } : null}
+      style={item.checked === 'checked' ? { textDecoration: "line-through" } : null}
     >
 
       <DropDownButton 

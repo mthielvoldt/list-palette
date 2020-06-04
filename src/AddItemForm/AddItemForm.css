@@ -21,7 +21,7 @@
   .add-span {
     background: #f1f5f8;
     display: block;
-    padding: 0.5rem 1rem;
+    padding: 3px 15px;
     border-radius: 5px;
     border: 2px solid hsl(198, 1%, 29%);
   }

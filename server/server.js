@@ -42,13 +42,13 @@ app.get('/items', async (req, res) => {
     logReq(req);
     if (!req.isAuthenticated()) {
         // create a new anonymous user
-        res.status(403).send("User not logged in");
+        res.status(401).send("User not logged in");
         return;
     }
     //console.log(query.getItems, req.user.user_id);
     const qRes = await db.query(query.getItems, [req.user.user_id]);
     //console.log(qRes.rows);
-    res.send(qRes.rows);
+    res.send({ user: req.user.name, items: qRes.rows });
 });
 
 app.get('/logout', async (req, res) => {
@@ -65,11 +65,6 @@ app.put('/test', async (req, res) => {
         // create a new anonymous user
         req.user = { user_id: 2 };
     }
-
-    //const qRes = await db.query(query.updateItems, [[1, 2, 3, 4, 5],['It','was','the','best','of']]);
-
-
-
 });
 
 // creates a new item
@@ -97,7 +92,7 @@ app.put('/items', async (req, res) => {
         promises.push(db.query(query.updateItems, updateData));
     }
     Promise.all(promises)
-        .then( (results) => {
+        .then((results) => {
             results.forEach(result => {
                 console.log(result.command, result.rows);
             });
@@ -108,7 +103,10 @@ app.put('/items', async (req, res) => {
 });
 
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/login.html', successRedirect: '/' }));
+app.post('/login', passport.authenticate('local'), (req, res) => {
+    logReq(req);
+    res.send(req.user);
+});
 
 app.post('/register', async (req, res) => {
     logReq(req);
