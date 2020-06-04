@@ -13,7 +13,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ inflate: true, strict: true, type: 'application/json' }));
 if (process.env.NODE_ENV !== 'production') {
-    app.use(express.static('server/public'));  // On production, nginx serves static content.
+    app.use(express.static('build'));  // On production, nginx serves static content.
 }
 app.use(session({
     secret: process.env.SESSION_SECRET,
