@@ -5,13 +5,14 @@ import List from "../List/List";
 import Header from "../Header/Header";
 import toSparseDoubleLink from '../formatData.js';
 import { dupHelper, mergeHelper, connectItem, disconnectItem } from './Helpers';
+import initialItems from "../initialItems";
 import './App.css';
 const axios = require('axios').default;
 
 const initialState = {
-  items: [{ id: 0, text: "home", next: null, child: null }],
+  items: initialItems,
   location: 0,
-  user : null
+  user: null
 }
 
 function App() {
@@ -25,8 +26,7 @@ function App() {
         return { data: initialState };
       })
       .then(res => {
-        console.log("server response:", res.data);
-        setState( { items: toSparseDoubleLink(res.data.items), user : res.data.user , location: 0 });
+        setState({ items: toSparseDoubleLink(res.data.items), user: res.data.user, location: 0 });
       })
       .catch(e => {
         console.error("Error creating items array.\n", e);
@@ -36,6 +36,19 @@ function App() {
   function logOut() {
     axios.get('/logout');
     setState(initialState);
+  }
+
+  function saveAllItems(user) {
+    // when a new user signs up, let's save all the data they have. 
+    // The front end works with a sparse array - when an item is deleted, it's 
+    // original index is never reused.  We don't want to add deleted items, so 
+    // we filter out all the empty items before sending. 
+    const packed = state.items.filter(
+      item => (typeof (item.id) !== undefined && item.id > 0));
+    const dbChanges = {insert: packed, update: [state.items[0]]};
+    axios.put('/items', dbChanges)
+    .then(loadItems)
+    .catch(console.log);
   }
 
   function editState({ type, data }) {
@@ -152,10 +165,11 @@ function App() {
 
   return (
     <>
-      <Header 
-        user ={state.user } 
-        loadItemsCB={loadItems} 
-        logOutCB={logOut} />
+      <Header
+        user={state.user}
+        loadItemsCB={loadItems}
+        logOutCB={logOut} 
+        saveAllItemsCB={saveAllItems} />
       <div className="container">
 
         <Location

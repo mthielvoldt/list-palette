@@ -4,7 +4,7 @@ import RegisterForm from '../AccountTools/RegisterForm';
 import LoginForm from '../AccountTools/LoginForm';
 import AccountMenu from '../AccountTools/AccountMenu';
 
-function NavBar({ user, loadItemsCB, logOutCB }) {
+function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
   const [viewState, setViewState] = useState("none");
 
   function loginSuccess() {
@@ -14,6 +14,10 @@ function NavBar({ user, loadItemsCB, logOutCB }) {
   function logOut() {
     setViewState("none");
     logOutCB();
+  }
+  function onRegisterSuccess(name) {
+    setViewState("none");
+    saveAllItemsCB(name);
   }
 
   function clearViewState(e) { setViewState('none') }
@@ -56,7 +60,7 @@ function NavBar({ user, loadItemsCB, logOutCB }) {
       }
       {(viewState === "register") &&
         <Dropdown align="right" closeCB={clearViewState} >
-          <RegisterForm />
+          <RegisterForm onRegisterSuccess={onRegisterSuccess}/>
         </Dropdown>
       }
       {(viewState === "login") &&

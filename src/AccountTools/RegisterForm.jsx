@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 
-function RegisterForm({ closeCB }) {
+function RegisterForm({ onRegisterSuccess }) {
   const [state, setState] = useState({ name: "", email: "", password: "", confirmPassword: "", error: "" });
 
   const handleChange = (e) => {
@@ -19,6 +19,11 @@ function RegisterForm({ closeCB }) {
     e.preventDefault();
     if (state.password === state.confirmPassword) {
       axios.post('/register', state)
+      .then(res => {onRegisterSuccess(res.data.name);})
+      .catch( err => {
+        console.error(err);
+        setState({...state, error: err.response.data })
+      });
     } else {
       setState({ ...state, password: "", confirmPassword: "", error: "Passwords do not match" });
     }
@@ -67,7 +72,7 @@ function RegisterForm({ closeCB }) {
           placeholder="Confirm Password" />
       </div>
       {(state.error) &&
-        <div class="alert alert-warning" role="alert">
+        <div class="alert alert-danger" role="alert">
           {state.error}
         </div>
       }

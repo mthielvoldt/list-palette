@@ -57,25 +57,12 @@ app.get('/logout', async (req, res) => {
     res.redirect('/');
 });
 
-// a route for running tests 
-app.put('/test', async (req, res) => {
-    logReq(req);
-    res.send("received!");
-    if (!req.isAuthenticated()) {
-        // create a new anonymous user
-        req.user = { user_id: 2 };
-    }
-});
-
 // creates a new item
 app.put('/items', async (req, res) => {
     logReq(req);
-    res.send("received!");
     if (!req.isAuthenticated()) {
-        // create a new anonymous user
-        //res.status(403).send("User not logged in");
-        //return;
-        req.user = { user_id: 25 };
+        res.status(403).send("User not logged in");
+        return;
     }
 
     let promises = [];
@@ -96,6 +83,7 @@ app.put('/items', async (req, res) => {
             results.forEach(result => {
                 console.log(result.command, result.rows);
             });
+            res.send("Changes saved");
         })
         .catch(console.error);
 
@@ -105,7 +93,7 @@ app.put('/items', async (req, res) => {
 
 app.post('/login', passport.authenticate('local'), (req, res) => {
     logReq(req);
-    res.send(req.user);
+    res.send("User created:" + req.user.name);
 });
 
 app.post('/register', async (req, res) => {
@@ -115,6 +103,7 @@ app.post('/register', async (req, res) => {
 
     const invalidReason = validateRegistration(email, name, pass);
     if (invalidReason) {
+        console.log(invalidReason);
         res.status(400).send(invalidReason);
         return;
     }
@@ -128,13 +117,13 @@ app.post('/register', async (req, res) => {
             if (err) {
                 console.log("Error while trying to req.login", err);
             }
-            res.redirect('/');
+            res.send({name: name});
         });
     } catch (err) {
         console.log("Error while registering new user");
         console.log(err.message);
         if (err.code === '23505') {
-            res.status(403).send("That email already exists");
+            res.status(400).send("That email already has an account");
             return;
         }
     }
