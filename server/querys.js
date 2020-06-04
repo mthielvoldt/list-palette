@@ -47,7 +47,7 @@ VALUES (
   UNNEST($5::integer[]),
   UNNEST($6::integer[])
 )
-RETURNING *`
+RETURNING user_id, item_id, item_text`
 
 const updateItems = `
   UPDATE items 
@@ -68,7 +68,11 @@ const updateItems = `
   RETURNING items.user_id, items.item_id, items.item_text`
 
 
-const deleteItem = ``;
+const deleteItems = `
+  DELETE FROM items 
+  WHERE items.user_id = $1 
+    AND items.item_id = $2
+  RETURNING item_id`;
 
 
 module.exports = {
@@ -76,4 +80,5 @@ module.exports = {
   getItems: getItems,
   insertItems: insertItems,
   updateItems: updateItems,
+  deleteItems: deleteItems
 }

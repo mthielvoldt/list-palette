@@ -69,15 +69,19 @@ app.put('/items', async (req, res) => {
 
     if (typeof req.body.insert != 'undefined' && req.body.insert.length > 0) {
         let insertData = formatDbData(req.user.user_id, req.body.insert);
-        console.log("insertData:", insertData);
         promises.push(db.query(query.insertItems, insertData));
     }
 
     if (typeof req.body.update != 'undefined' && req.body.update.length > 0) {
         let updateData = formatDbData(req.user.user_id, req.body.update);
-        console.log("updateData:", updateData);
         promises.push(db.query(query.updateItems, updateData));
     }
+
+    if (typeof req.body.delete != 'undefined' && req.body.delete > 0) {
+        let deleteData = [req.user.user_id, req.body.delete];
+        promises.push(db.query(query.deleteItems, deleteData));
+    }
+
     Promise.all(promises)
         .then((results) => {
             results.forEach(result => {
@@ -85,7 +89,10 @@ app.put('/items', async (req, res) => {
             });
             res.send("Changes saved");
         })
-        .catch(console.error);
+        .catch( err => {
+            console.error(err);
+            res.status(500).send("items not saved.");
+        });
 
 
 });

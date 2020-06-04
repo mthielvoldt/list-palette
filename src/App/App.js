@@ -131,6 +131,7 @@ function App() {
     // Note: we don't need to actually remove the item in the front-end, so we don't.
     let newItems = state.items.concat();
     let dbChanges = disconnectItem(id, newItems); // mutates newItems, but not embedded objects.
+    Object.assign(dbChanges, {delete: id});
     axios.put("/items", dbChanges);
     setState({ ...state, items: newItems });
 
