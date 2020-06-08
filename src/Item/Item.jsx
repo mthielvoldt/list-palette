@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import List from "../List/List";
 import DropDownButton from "./DropDownButton"
 import './Item.css';
-import ItemIcon from './ItemIcon';
+import ClickableIcon from './ClickableIcon';
+import DroppableIcon from './DroppableIcon';
 
 function Item({ item, items, position, editState}) {
   const [viewState, setViewState] = useState({ drop: "collapsed", edit: false});
@@ -125,10 +126,10 @@ function Item({ item, items, position, editState}) {
             /> 
         : item.text} 
 
-      <ItemIcon type="delete" onClick={e => deleteMe(e)}/>
-      <ItemIcon type="edit" onClick={e => editMe(e)}/>
-      <ItemIcon type="focus" onClick={e => enterMe(e)}/>
-      <ItemIcon type="merge" onDrop={e => handleMergeIconDrop(e)}/>
+      <ClickableIcon type="delete" onClick={e => deleteMe(e)}/>
+      <ClickableIcon type="edit" onClick={e => editMe(e)}/>
+      <ClickableIcon type="focus" onClick={e => enterMe(e)}/>
+      <DroppableIcon type="merge" onDrop={e => handleMergeIconDrop(e)}/>
 
       {(item.child) && (viewState.drop === "expanded") &&
         <List
