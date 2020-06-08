@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Header.css'
 import Dropdown from './Dropdown';
 import RegisterForm from '../AccountTools/RegisterForm';
 import LoginForm from '../AccountTools/LoginForm';
@@ -39,7 +40,7 @@ function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
 
 
   return (
-    <header className="fixed-top">
+    <header>
       <nav className="navbar navbar-expand-md navbar-dark bg-dark">
         <a className="navbar-brand" href="/"><img className="mr-2" src="logo192.svg" alt="List palette logo" height="48" />List Palette</a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
