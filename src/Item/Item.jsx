@@ -27,7 +27,6 @@ function Item({ item, items, position, editState}) {
   }
 
   function handleMergeIconDrop(e) {
-    e.stopPropagation();
     let src = Number(e.dataTransfer.getData("startId"));
     editState({type: "MERGE_LISTS", data: {src: src, dest: item.id}});
   }
@@ -129,7 +128,7 @@ function Item({ item, items, position, editState}) {
       <ClickableIcon type="delete" onClick={e => deleteMe(e)}/>
       <ClickableIcon type="edit" onClick={e => editMe(e)}/>
       <ClickableIcon type="focus" onClick={e => enterMe(e)}/>
-      <DroppableIcon type="merge" onDrop={e => handleMergeIconDrop(e)}/>
+      <DroppableIcon type="merge" onDrop={handleMergeIconDrop}/>
 
       {(item.child) && (viewState.drop === "expanded") &&
         <List

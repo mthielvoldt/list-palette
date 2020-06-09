@@ -2,13 +2,21 @@ import React from 'react';
 
 function DroppableIcon({ type, onDrop }) {
 
+  function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    removeShadow(e);
+    onDrop(e);
+  }
+
   function handleDragOver(e) {
     if (e.preventDefault) e.preventDefault(); // Necessary. Allows us to drop.
     if (e.stopPropagation) e.stopPropagation();
     e.target.classList.add("icon-drag-over");
     return false;
   }
-  function handleDragLeave(e) {
+
+  function removeShadow(e) {
     if (e.stopPropagation) {
       e.stopPropagation(); // Stops some browsers from redirecting.
     }
@@ -17,9 +25,9 @@ function DroppableIcon({ type, onDrop }) {
 
   return (
     <img src={'/icons/' + type + '-icon.svg'} alt={type + " icon"} className="icon"
-      onDrop={onDrop}
+      onDrop={handleDrop}
       onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
+      onDragLeave={removeShadow}
     />
   );
 }
