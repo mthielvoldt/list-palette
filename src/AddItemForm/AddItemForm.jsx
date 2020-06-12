@@ -28,6 +28,7 @@ function AddItemForm({ editState }) {
         onChange={handleChange} 
         onKeyPress={handleKeyPress}
         type="text" 
+        data-testid="add-item-input"
         value={inputText} />
       <button onClick={addItem}>
         <span className="add-span">Add</span>
