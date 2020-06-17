@@ -1,22 +1,18 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
+import mockData from './mockData'
 import axios from 'axios';
 jest.mock('axios');
 
 afterEach(cleanup);
 
-const items = [
-  { "id": 3, "text": "People", "child": null, "next": 2, "checked": "false" },
-  { "id": 2, "text": "To-do", "child": null, "next": 1, "checked": "false" },
-  { "id": 1, "text": "Groceries", "child": null, "next": null, "checked": "false" },
-  { "id": 0, "text": "Home", "child": 3, "next": null, "checked": "false" }
-];
 
-describe("The integrated front-end correctly", () => {
+
+describe("The App ", () => {
 
   it("renders with anonymous user", async () => {
-    axios.get.mockResolvedValue({ data: { user: null, items: items } });
+    axios.get.mockResolvedValue({ data: { user: null, items: mockData.itemsShort } });
     //axios.get.mockImplementation(() => Promise.resolve(resp))
 
     const app = render(<App />);
@@ -29,7 +25,7 @@ describe("The integrated front-end correctly", () => {
   });
 
   it("renders with signed-in user", async () => {
-    axios.get.mockResolvedValue({ data: { user: 'John', items: items } });
+    axios.get.mockResolvedValue({ data: { user: 'John', items: mockData.itemsShort } });
     const app = render(<App />);
     //axios.get.mockImplementation(() => Promise.resolve(resp))
 
@@ -40,7 +36,7 @@ describe("The integrated front-end correctly", () => {
     expect(app.asFragment()).toMatchSnapshot();
   });
 
-  it("renders, sends PUT when user adds items", async () => {
+  it("renders and sends PUT when user adds items", async () => {
     // mock the PUT request that should be sent when item is added.
     axios.put.mockResolvedValue({ data: {}, status: 200 });
 

@@ -199,7 +199,7 @@ exports[`The integrated front-end correctly renders with anonymous user 1`] = `
 </DocumentFragment>
 `;
 
-exports[`The integrated front-end correctly renders with signed-in user 1`] = `
+exports[`The App  renders with signed-in user 1`] = `
 <DocumentFragment>
   <header>
     <nav
