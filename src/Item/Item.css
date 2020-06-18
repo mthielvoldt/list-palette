@@ -1,10 +1,14 @@
 .item {
-    /* background: #f1f5f8; */
+    /* background: rgb(214, 231, 227);  */
+    /* border-bottom: 1px dotted #aaa; */
+    font-family: 'Itim', sans-serif;
+    line-height: 1.2rem;
+    font-size: 1.6rem;
     cursor: default;
     text-align: left;
     position: relative;
     padding-top: 0.5rem;
-    padding-left: 0.7rem;
+    padding-left: 0.8rem;
   }
   
   .item.over {

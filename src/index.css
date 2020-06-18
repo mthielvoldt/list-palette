@@ -8,7 +8,7 @@ body {
   justify-content: center;
   align-items: center;
   color: hsl(198, 1%, 29%);
-  font-family: "Architects Daughter", cursive;
+  font-family: 'Roboto', 'Trebuchet MS', sans-serif;
   font-size: 130%;
 }
 
@@ -17,14 +17,8 @@ button {
   padding: 5px;
   margin-left: 5px;
   border: none;
-  font-family: "Architects Daughter", cursive;
   text-decoration: none;
   background: none;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
 
 #root {

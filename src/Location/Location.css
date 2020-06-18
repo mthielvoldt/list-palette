@@ -2,5 +2,14 @@
 .location {
     text-align: left;
     align-items: left;
-    margin-left: .7rem;
+    margin-left: 1.6rem;
 }
+
+.location-button {
+    position: relative;
+    padding: 2px 7px;
+    border: none;
+    text-decoration: none;
+    border-radius: 5px;
+    background-color: #fcf876;
+  }
