@@ -1,9 +1,13 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
+import testUtils from 'react-dom/test-utils';
+import { toMatchDiffSnapshot } from 'snapshot-diff';
 import App from './App';
 import mockData from './mockData'
 import axios from 'axios';
 jest.mock('axios');
+
+expect.extend({ toMatchDiffSnapshot });
 
 afterEach(cleanup);
 
@@ -90,21 +94,64 @@ describe("The App ", () => {
   });
 
 
-  it("renders, sends PUT when user moves items", async () => {
+  it("renders and sends PUT when user moves items", async () => {
+    // mock the GET request that loads the seed data.
+    axios.get.mockResolvedValue(mockData.nestedResponse);
+    // mock the PUT request that should be sent when item is moved.
+    axios.put.mockResolvedValue({ data: {}, status: 200 });
 
+    // Mock the dataTransfer object (because it isn't implemented in js-DOM). 
+    // Create a local object to hold key-value pairs, and functions for writing and retreiving. 
+    let storedData = {};
+    const mockSetData = jest.fn((key, value) => {
+      Object.assign(storedData, { [key]: value })
+    })
+    const mockGetData = jest.fn(key => storedData[key]);
+
+    // Render and wait for loading the seed items
+    const app = render(<App />);
+    let alpha = await app.findByText('alpha');
+    let beta = app.getByText('beta');
+    let appBefore = app.asFragment();
+
+    // Simulate user moving an item on first level 
+    testUtils.Simulate.dragStart(alpha, { dataTransfer: { setData: mockSetData } });
+    testUtils.Simulate.dragOver(beta, { dataTransfer: { getData: mockGetData } });
+    testUtils.Simulate.drop(beta, { dataTransfer: { getData: mockGetData } });
+
+    expect(app.asFragment()).toMatchDiffSnapshot(appBefore);
+    expect(axios.put).lastCalledWith('/items',
+      {
+        "insert": [],
+        "update": [
+          { "id": 0, "text": "Home", "child": 2, "next": null, "checked": "false", "parent": null, "previous": null },
+          { "id": 3, "text": "alpha", "child": 4, "next": 1, "checked": "unchecked", "parent": 0, "previous": 2 },
+          { "id": 2, "text": "beta", "child": 9, "next": 3, "checked": "false", "parent": 0, "previous": null }
+        ]
+      });
+
+    // If we just drop the item back onto itself, the API should not be hit. 
   });
 
-  it("renders, sends PUT when user deletes items", async () => {
+  it.skip("moves items with touch only after long-touch", async () => {
+    // touch item and move immediately
+    
+    // it should not be "lifted" (on a phone it would scroll)
 
+    // touch and hold item. 
+    // it should lift item for drag/drop
+  })
+
+  it.skip("renders and sends PUT when user deletes items", async () => {
   });
 
-  it("renders, sends PUT when user merges items", async () => {
-
+  it.skip("renders and sends PUT when user merges items", async () => {
   });
 
-  it("handles a sign-up", async () => {
-
+  it.skip("handles a sign-up", async () => {
   });
+
+
 
 });
 
