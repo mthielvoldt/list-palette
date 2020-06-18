@@ -1,4 +1,9 @@
+ CREATE DATABASE list_palette;
 
+CREATE USER list_palette_user; 
+
+\password list_palette_user
+\c list_palette
 -- UNIQUE constraint should auto-generate an index on email, so I don't need to create one explicitely
 CREATE TABLE users (
     user_id serial PRIMARY KEY, -- UNIQUE NOT NULL are implied
@@ -26,3 +31,7 @@ I chose the HASH index because there is no useful significance to one user_id be
 I only care whether I have the correct (==) user or not. 
 **/
 CREATE INDEX items_user_index ON items USING HASH (user_id);
+
+GRANT ALL PRIVILEGES ON DATABASE list_palette TO list_palette_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO list_palette_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO list_palette_user;
