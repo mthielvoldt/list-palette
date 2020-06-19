@@ -13,7 +13,7 @@ afterEach(cleanup);
 
 
 
-describe("The App ", () => {
+describe("The App", () => {
 
   it("renders with anonymous user", async () => {
     axios.get.mockResolvedValue({ data: { user: null, items: mockData.itemsShort } });
@@ -94,9 +94,8 @@ describe("The App ", () => {
   });
 
 
-  it("renders and sends PUT when user moves items", async () => {
-    // mock the GET request that loads the seed data.
-    axios.get.mockResolvedValue(mockData.nestedResponse);
+  it("renders and sends PUT for top-level moves", async () => {
+
     // mock the PUT request that should be sent when item is moved.
     axios.put.mockResolvedValue({ data: {}, status: 200 });
 
@@ -108,16 +107,14 @@ describe("The App ", () => {
     })
     const mockGetData = jest.fn(key => storedData[key]);
 
-    // Render and wait for loading the seed items
-    const app = render(<App />);
-    let alpha = await app.findByText('alpha');
-    let beta = app.getByText('beta');
+    let app = await setupNested();
+
     let appBefore = app.asFragment();
 
     // Simulate user moving an item on first level 
-    testUtils.Simulate.dragStart(alpha, { dataTransfer: { setData: mockSetData } });
-    testUtils.Simulate.dragOver(beta, { dataTransfer: { getData: mockGetData } });
-    testUtils.Simulate.drop(beta, { dataTransfer: { getData: mockGetData } });
+    testUtils.Simulate.dragStart(app.alpha, { dataTransfer: { setData: mockSetData } });
+    testUtils.Simulate.dragOver(app.beta, { dataTransfer: { getData: mockGetData } });
+    testUtils.Simulate.drop(app.beta, { dataTransfer: { getData: mockGetData } });
 
     expect(app.asFragment()).toMatchDiffSnapshot(appBefore);
     expect(axios.put).lastCalledWith('/items',
@@ -134,8 +131,13 @@ describe("The App ", () => {
   });
 
   it.skip("moves items with touch only after long-touch", async () => {
+
+    const app = setupNested();
+
     // touch item and move immediately
-    
+
+    testUtils.Simulate.touchMove(alpha);
+
     // it should not be "lifted" (on a phone it would scroll)
 
     // touch and hold item. 
@@ -156,4 +158,14 @@ describe("The App ", () => {
 });
 
 
+async function setupNested() {
+  // mock the GET request that loads the seed data.
+  axios.get.mockResolvedValue(mockData.nestedResponse);
 
+  // Render and wait for loading the seed items
+  const app = render(<App />);
+  let alpha = await app.findByText('alpha');
+  let beta = app.getByText('beta');
+  let charlie = app.getByText('charlie');
+  return { ...app, alpha, beta, charlie };
+}

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`The App  renders and sends PUT when user moves items 1`] = `
+exports[`The App renders and sends PUT for top-level moves 1`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -33,7 +33,7 @@ exports[`The App  renders and sends PUT when user moves items 1`] = `
           />"
 `;
 
-exports[`The App  renders with anonymous user 1`] = `
+exports[`The App renders with anonymous user 1`] = `
 <DocumentFragment>
   <header>
     <nav
@@ -232,7 +232,7 @@ exports[`The App  renders with anonymous user 1`] = `
 </DocumentFragment>
 `;
 
-exports[`The App  renders with signed-in user 1`] = `
+exports[`The App renders with signed-in user 1`] = `
 <DocumentFragment>
   <header>
     <nav
