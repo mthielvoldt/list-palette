@@ -185,7 +185,6 @@ var DragDropTouch;
                         this._dragSource = src;
                         this._ptDown = this._getPoint(e);
                         this._lastTouch = e;
-                        e.preventDefault();
                         // show context menu if the user hasn't started dragging after a while
                         setTimeout(function () {
                             if (_this._dragSource == src && _this._img == null) {
@@ -244,10 +243,11 @@ var DragDropTouch;
                     e.preventDefault();
                     return;
                 }
-                // user clicked the element but didn't drag, so clear the source and simulate a click
+                // user clicked the element but didn't drag.  A brief touch dispatches a 
+                // 'click' event by default, so we don't want a second one.  But we 
+                // do still want to record the time of this click. 
                 if (!this._img) {
                     this._dragSource = null;
-                    this._dispatchEvent(this._lastTouch, 'click', e.target);
                     this._lastClick = Date.now();
                 }
                 // finish dragging
@@ -433,7 +433,7 @@ var DragDropTouch;
     DragDropTouch._OPACITY = 0.5; // drag image opacity
     DragDropTouch._DBLCLICK = 500; // max ms between clicks in a double click
     DragDropTouch._CTXMENU = 900; // ms to hold before raising 'contextmenu' event
-    DragDropTouch._ISPRESSHOLDMODE = false; // decides of press & hold mode presence
+    DragDropTouch._ISPRESSHOLDMODE = true; // decides of press & hold mode presence
     DragDropTouch._PRESSHOLDAWAIT = 400; // ms to wait before press & hold is detected
     DragDropTouch._PRESSHOLDMARGIN = 25; // pixels that finger might shiver while pressing
     DragDropTouch._PRESSHOLDTHRESHOLD = 0; // pixels to move before drag starts
