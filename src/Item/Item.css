@@ -2,30 +2,43 @@
     /* background: rgb(214, 231, 227);  */
     /* border-bottom: 1px dotted #aaa; */
     font-family: 'Itim', sans-serif;
-    line-height: 1.2rem;
+    line-height: 1.7rem;
     font-size: 1.6rem;
     cursor: default;
-    text-align: left;
-    position: relative;
     padding-top: 0.5rem;
     padding-left: 0.8rem;
-  }
+}
+
+.item-first-line {
+    display: flex;
+    pointer-events: none;
+}
+
+.item-text-container {
+    flex-grow: 1;
+    text-align: left;
+    margin-right: 8px;
+    pointer-events: none;
+}
   
-  .item.over {
-    border-top: 2px solid blue;
-  }
-  .item.under {
-    border-bottom: 2px solid blue;
-  }
-  
-  .item .icon {
-    float: right;
+.item-icon-container {
+    pointer-events: all;
+    flex-shrink: 0;
+}
+.item .icon {
     height: 1.75rem;
     width: 1.75rem;
     padding-left: 3px;
-  }
+}
+  
+.item.over {
+    border-top: 2px solid blue;
+}
+.item.under {
+    border-bottom: 2px solid blue;
+}
 
-  .icon-drag-over {
+.icon-drag-over {
     box-shadow: 0px 0px 10px blue;
     border: 2px solid blue;
-  }
+}

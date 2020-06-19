@@ -8,7 +8,8 @@
 .location-button {
     position: relative;
     padding: 2px 7px;
-    border: none;
+    border: 1px solid #bdba64;
+    margin-top: 5px;
     text-decoration: none;
     border-radius: 5px;
     background-color: #fcf876;

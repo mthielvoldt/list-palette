@@ -5,42 +5,42 @@ import './Item.css';
 import ClickableIcon from './ClickableIcon';
 import DroppableIcon from './DroppableIcon';
 
-function Item({ item, items, position, editState}) {
-  const [viewState, setViewState] = useState({ drop: "collapsed", edit: false});
+function Item({ item, items, position, editState }) {
+  const [viewState, setViewState] = useState({ drop: "collapsed", edit: false });
   const [text, setText] = useState(item.text);
 
   function onItemClick(event) {
     event.stopPropagation();
     event.preventDefault();
-    editState({type: "TOGGLE_LIST_CHECKED", data: item.id });
+    editState({ type: "TOGGLE_LIST_CHECKED", data: item.id });
   }
 
   function deleteMe(e) {
     e.preventDefault();
     e.stopPropagation();
-    editState({type: "DELETE_LIST", data: item.id});
+    editState({ type: "DELETE_LIST", data: item.id });
   }
 
   function enterMe(e) {
     e.stopPropagation();
-    editState({type: "SET_LOCATION", data: item.id});
+    editState({ type: "SET_LOCATION", data: item.id });
   }
 
   function handleMergeIconDrop(e) {
     let src = Number(e.dataTransfer.getData("startId"));
-    editState({type: "MERGE_LISTS", data: {src: src, dest: item.id}});
+    editState({ type: "MERGE_LISTS", data: { src: src, dest: item.id } });
   }
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
-      editState({type: "EDIT_ITEM", data:{ id: item.id, text: text}});
-      setViewState({...viewState, edit: false});
+      editState({ type: "EDIT_ITEM", data: { id: item.id, text: text } });
+      setViewState({ ...viewState, edit: false });
     }
   }
   function editMe(e) {
     e.stopPropagation();
     console.log("edit mode")
-    setViewState( prevState => ({...prevState, edit: true}));
+    setViewState(prevState => ({ ...prevState, edit: true }));
   }
 
   function handleDragStart(e) {
@@ -59,7 +59,7 @@ function Item({ item, items, position, editState}) {
   function handleDragOver(e) {
     // the item under the dragged item.
     if (e.preventDefault) e.preventDefault(); // Necessary. Allows us to drop.
-    if (e.stopPropagation) e.stopPropagation();
+    //if (e.stopPropagation) e.stopPropagation();
 
     console.log("Start: ", e.dataTransfer.getData("startPosition"), "  Current: ", position);
 
@@ -86,18 +86,22 @@ function Item({ item, items, position, editState}) {
 
     // Don't do anything if dropping the same column we're dragging.
     if (position > startPosition) {
-      editState({type: "MOVE_LIST", data: 
-        {src: fromId, dest: item.id, relation: "after"}});
+      editState({
+        type: "MOVE_LIST", data:
+          { src: fromId, dest: item.id, relation: "after" }
+      });
     } else if (position < startPosition) {
-      editState({type: "MOVE_LIST", data: 
-        {src: fromId, dest: item.id, relation: "before"}});
+      editState({
+        type: "MOVE_LIST", data:
+          { src: fromId, dest: item.id, relation: "before" }
+      });
     }
     removeOverUnder(e);
     return false;
   }
 
   function toggleDropDown() {
-    setViewState( prevState => ({...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded"}));
+    setViewState(prevState => ({ ...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded" }));
   }
 
   return (
@@ -112,23 +116,28 @@ function Item({ item, items, position, editState}) {
       onClick={e => onItemClick(e)}
       style={item.checked === 'checked' ? { textDecoration: "line-through" } : null}
     >
+      <div className="item-first-line">
+        <DropDownButton
+          viewState={(item.child) ? viewState.drop : "empty"}
+          toggleCB={toggleDropDown} />
+        <span className="item-text-container">
+          {(viewState.edit)
+            ? <input
+              value={text}
+              onChange={(e) => { setText(e.target.value) }}
+              onKeyDown={handleKeyDown}
+              autoFocus
+            />
+            : item.text}
+        </span>
 
-      <DropDownButton 
-        viewState={(item.child) ? viewState.drop : "empty" }
-        toggleCB={toggleDropDown} />
-      {(viewState.edit) 
-        ? <input 
-            value={text} 
-            onChange={(e) => {setText(e.target.value)}}
-            onKeyDown={handleKeyDown}
-            autoFocus
-            /> 
-        : item.text} 
-
-      <ClickableIcon type="delete" onClick={e => deleteMe(e)}/>
-      <ClickableIcon type="edit" onClick={e => editMe(e)}/>
-      <ClickableIcon type="focus" onClick={e => enterMe(e)}/>
-      <DroppableIcon type="merge" onDrop={handleMergeIconDrop}/>
+        <span className="item-icon-container">
+          <DroppableIcon type="merge" onDrop={handleMergeIconDrop} />
+          <ClickableIcon type="focus" onClick={e => enterMe(e)} />
+          <ClickableIcon type="edit" onClick={e => editMe(e)} />
+          <ClickableIcon type="delete" onClick={e => deleteMe(e)} />
+        </span>
+      </div>
 
       {(item.child) && (viewState.drop === "expanded") &&
         <List

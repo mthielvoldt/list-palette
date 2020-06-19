@@ -23,7 +23,7 @@ function DropDownButton({ viewState, toggleCB }) {
     }
 
     return (
-      <svg onClick={handleClick} className="bi bi-caret-right-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <svg onClick={handleClick} className="item-icon-container bi bi-caret-right-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         {path}
       </svg>
     );
