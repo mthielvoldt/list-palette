@@ -100,6 +100,45 @@ function Item({ item, items, position, editState}) {
     setViewState( prevState => ({...prevState, drop: (prevState.drop === "expanded") ? "collapsed" : "expanded"}));
   }
 
+  let dragging = false;
+  function touchStart(e) {
+    // ddt aborts if e.defaultPrevented or e.touches > 2 (double-tap)
+    const target = e.target;
+    const e_cpy = {...e};
+    setTimeout( () => {
+      dragging = true;
+      startTouchDrag(e_cpy, target);
+    }, 400);
+  }
+
+  function startTouchDrag(e, target) {
+    dispatchEvent(e, 'dragstart', target);
+  }
+  function touchMove(e) {
+    // ddt 
+    
+  }
+  function touchEnd(e) {
+  }
+
+  function dispatchEvent(e, type, target) {
+    if (e && target) {
+        let evt = new Event(type, {bubbles: true, cancelable: true, composed: true});
+
+        //var evt = document.createEvent('Event'), t = e.touches ? e.touches[0] : e;
+        //evt.initEvent(type, true, true);
+        //evt.button = 0;
+        //evt.which = evt.buttons = 1;
+        //this._copyProps(evt, e, DragDropTouch._kbdProps);
+        //this._copyProps(evt, t, DragDropTouch._ptProps);
+        //evt.dataTransfer = this._dataTransfer;
+        target.dispatchEvent(evt);
+        return evt.defaultPrevented;
+    }
+    return false;
+};
+
+
   return (
     <div
       className="item"
@@ -110,6 +149,10 @@ function Item({ item, items, position, editState}) {
       onDragStart={e => handleDragStart(e)}
       onDrop={e => handleDragDrop(e)}
       onClick={e => onItemClick(e)}
+      onTouchStart={touchStart}
+      onTouchMove={touchMove}
+      onTouchEnd={touchEnd}
+      onTouchCancel={touchEnd}
       style={item.checked === 'checked' ? { textDecoration: "line-through" } : null}
     >
 
