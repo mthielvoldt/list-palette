@@ -1,8 +1,7 @@
- CREATE DATABASE list_palette;
+CREATE DATABASE list_palette;
 
-CREATE USER list_palette_user; 
+CREATE USER list_palette_user WITH PASSWORD :'lp_password'; 
 
-\password list_palette_user
 \c list_palette
 -- UNIQUE constraint should auto-generate an index on email, so I don't need to create one explicitely
 CREATE TABLE users (
