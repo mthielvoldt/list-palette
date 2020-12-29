@@ -2,11 +2,11 @@
 const { Pool, Client } = require("pg");
 
 const dbConfig = {
-    user: process.env.PGUSER,
-    password: process.env.PGPASS,
-    database: process.env.PGDATABASE,
-    host: process.env.PGHOST,
-    port: process.env.PGPORT,
+    user: process.env.LP_USER,
+    password: process.env.LP_PASS,
+    database: process.env.LP_DATABASE,
+    host: process.env.LP_HOST,
+    port: process.env.LP_PORT,
     max: 5,
     idleTimeoutMillis: 4000,
 };
