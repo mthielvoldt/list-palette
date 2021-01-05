@@ -4,7 +4,7 @@ import Dropdown from './Dropdown';
 import RegisterForm from '../AccountTools/RegisterForm';
 import LoginForm from '../AccountTools/LoginForm';
 import AccountMenu from '../AccountTools/AccountMenu';
-import About from '../About/About';
+import Help from '../Help/Help';
 
 function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
   const [viewState, setViewState] = useState("none");
@@ -49,7 +49,7 @@ function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
         <div className="collapse navbar-collapse" id="navbarCollapse">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item" >
-              <button className="nav-link" onClick={e => { setViewState("about") }}>About</button>
+              <button className="nav-link" onClick={e => { setViewState("help") }}>Help</button>
             </li>
           </ul>
           {(user !== null) ? Account : signInUp}
@@ -70,9 +70,9 @@ function NavBar({ user, loadItemsCB, logOutCB, saveAllItemsCB }) {
           <LoginForm loginSuccessCB={loginSuccess} />
         </Dropdown>
       }
-      {(viewState === "about") &&
+      {(viewState === "help") &&
         <Dropdown align="left" closeCB={clearViewState}>
-          <About/>
+          <Help/>
         </Dropdown>
       }
     </header>

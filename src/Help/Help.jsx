@@ -1,6 +1,6 @@
 import React from 'react';
 
-function About() {
+function Help() {
   return (
     <>
       <p>ListPalette is a place where you can organize lists and mix them together.  You can:</p>
@@ -14,4 +14,4 @@ function About() {
     </>
   );
 }
-export default About;
+export default Help;
