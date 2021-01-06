@@ -10,7 +10,7 @@
   "author": "mthielvoldt",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
