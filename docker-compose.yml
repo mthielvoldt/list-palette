@@ -1,0 +1,51 @@
+version: "3.9"
+services: 
+
+  lp-frontend:
+    container_name: lp_front_dev
+    image: "node:12.20"
+    restart: unless-stopped
+    user: "node"
+    working_dir: /home/node/app
+    environment: 
+      - NODE_ENV=dev
+      - CI=true
+    volumes: 
+      - .:/home/node/app
+    # expose and map the port.
+    ports: 
+      - "3000:3000"
+    # referenced in package.json for frontend under "proxy":
+    links: 
+      - lp_api
+    command: "npm start"
+
+  lp_api:
+    container_name: lp_api_dev
+    image: "node:12.20"
+    restart: unless-stopped
+    user: "node"
+    working_dir: /home/node/app
+    env_file: 
+      - .env
+    volumes:
+      - ./server/:/home/node/app
+    expose: 
+      - "8000"
+    command: "npm start"
+    links: 
+      - lp_db
+
+  lp_db:
+    image: postgres:12.5
+    restart: unless-stopped
+    env_file: 
+      - .env
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+      - lp-data:/var/lib/postgresql/data
+    ports: 
+      - "5434:5432"
+      
+volumes:
+  lp-data:
